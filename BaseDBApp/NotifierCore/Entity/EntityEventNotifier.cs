@@ -1,9 +1,9 @@
-﻿using DBAppCore.EntityCore;
+﻿using Mawa.DBCore.EntityCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBAppCore.NotifierCore.Entity
+namespace Mawa.DBCore.NotifierCore.Entity
 {
     public delegate void OnModel_Delegate<T>(T model) where T : ModelEntityCore;
 

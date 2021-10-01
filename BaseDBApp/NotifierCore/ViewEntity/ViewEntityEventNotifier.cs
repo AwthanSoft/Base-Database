@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBAppCore.NotifierCore.ViewEntity
+namespace Mawa.DBCore.NotifierCore.ViewEntity
 {
     public delegate void OnViewEntity_Delegate<T>(T model) where T : ViewEntityCore.ModelViewEntityCore;
 

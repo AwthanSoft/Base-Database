@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace DBAppCore.ViewEntityCore
+namespace Mawa.DBCore.ViewEntityCore
 {
     public abstract class ViewEntityViewModel<TViewEntity> : INotifyPropertyChanged 
         where TViewEntity : ModelViewEntityCore 

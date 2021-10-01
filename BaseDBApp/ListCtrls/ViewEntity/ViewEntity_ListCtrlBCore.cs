@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Mawa.Lock;
 
-namespace DBAppCore.ListCtrls.ViewEntity
+namespace Mawa.DBCore.ListCtrls.ViewEntity
 {
     public delegate TViewEntity[] OnTViewEntity_Arr_Delegate<TViewEntity>()
     where TViewEntity : ViewEntityCore.ModelViewEntityCore;

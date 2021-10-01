@@ -5,11 +5,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using DBAppCore.ViewEntityCore;
+using Mawa.DBCore.ViewEntityCore;
 using Mawa.Lock;
 using Mawa.BaseApp;
 
-namespace DBAppCore.ViewEntityListCtrls
+namespace Mawa.DBCore.ViewEntityListCtrls
 {
     
     public abstract class EntityViewModel_ListCtrl<TViewEntity, TViewEntityModelView> : IDisposable, INotifyPropertyChanged

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     public static class ModelDBControllerExtension
     {

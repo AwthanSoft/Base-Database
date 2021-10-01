@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DBAppCore.ViewEntityCore;
+using Mawa.DBCore.ViewEntityCore;
 
-namespace DBAppCore.NotifierCore.ViewEntity
+namespace Mawa.DBCore.NotifierCore.ViewEntity
 {
     internal interface IViewEntityNotifierControl
     {

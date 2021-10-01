@@ -4,9 +4,9 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Threading.Tasks;
-using DBAppCore.EntityCore;
+using Mawa.DBCore.EntityCore;
 
-namespace DBAppCore.NotifierCore.Entity
+namespace Mawa.DBCore.NotifierCore.Entity
 {
     internal interface IEntityNotifierControl
     {

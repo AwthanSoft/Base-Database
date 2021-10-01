@@ -1,5 +1,5 @@
 ﻿using Mawa.Lock;
-using DBAppCore.EntityCore;
+using Mawa.DBCore.EntityCore;
 //using Syncfusion.DataSource;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 
 
-namespace DBAppCore.ListCtrls
+namespace Mawa.DBCore.ListCtrls
 {
     public abstract class ModelEntity_ListCtrlEntityDBManager<TEntity, TEntityArgs> where TEntity : ModelEntityCore where TEntityArgs : EntityArgsCore<TEntity>, IDisposable , System.ComponentModel.INotifyPropertyChanging
     {

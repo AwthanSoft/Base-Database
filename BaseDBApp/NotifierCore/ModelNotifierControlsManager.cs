@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DBAppCore.NotifierCore
+namespace Mawa.DBCore.NotifierCore
 {
    
     class ModelNotifierControlsManager : IDisposable

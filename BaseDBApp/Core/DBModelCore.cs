@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     public class DBModelCore
     {

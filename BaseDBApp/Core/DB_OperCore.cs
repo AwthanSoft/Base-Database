@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 //using Windows.Storage;
 //using Xamarin.Forms.PlatformConfiguration;
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     public abstract class DB_OperCore
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBAppCore.NotifierCore
+namespace Mawa.DBCore.NotifierCore
 {
     enum DBModelNotifierType
     {

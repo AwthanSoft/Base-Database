@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace DBAppCore.EntityCore
+namespace Mawa.DBCore.EntityCore
 {
     public abstract class EntityViewModelCore<TEntity ,TEntityArgs> : INotifyPropertyChanged where TEntity : ModelEntityCore where TEntityArgs : EntityArgsCore<TEntity>
     {

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
-namespace DBAppCore.ListCtrls
+namespace Mawa.DBCore.ListCtrls
 {
     [Serializable]
     public class ObservableKeyValuePair<TKey, TValue> : INotifyPropertyChanged

@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using DBAppCore.NotifierCore;
+using Mawa.DBCore.NotifierCore;
 
 //using System.Data.Entity.Migrations;
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     public class ModelDBController<T> 
         where T: DBModelCore

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     using Microsoft.EntityFrameworkCore;
     //using System.Data.Entity;

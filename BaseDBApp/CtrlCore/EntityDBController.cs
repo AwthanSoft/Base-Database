@@ -7,9 +7,9 @@ using System.Text;
 using System.Linq;
 
 //using System.Data.Entity.Migrations;
-using DBAppCore.EntityCore;
+using Mawa.DBCore.EntityCore;
 
-namespace DBAppCore.CtrlCore
+namespace Mawa.DBCore.CtrlCore
 {
     public sealed class EntityDBController<T> : ModelDBController<T>
         where T: ModelEntityCore 

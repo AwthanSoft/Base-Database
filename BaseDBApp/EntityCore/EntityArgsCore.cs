@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Reflection;
 */
-namespace DBAppCore.EntityCore
+namespace Mawa.DBCore.EntityCore
 {
     public abstract class EntityArgsCore<T> where T : ModelEntityCore
     {

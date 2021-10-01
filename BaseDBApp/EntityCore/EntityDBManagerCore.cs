@@ -7,10 +7,10 @@ using System.Text;
 using System.Linq;
 
 //using System.Data.Entity.Migrations;
-using DBAppCore.NotifierCore;
-using DBAppCore.NotifierCore.Entity;
+using Mawa.DBCore.NotifierCore;
+using Mawa.DBCore.NotifierCore.Entity;
 
-namespace DBAppCore.EntityCore
+namespace Mawa.DBCore.EntityCore
 {
     //public delegate void OnModelArgs_Delegate<T, TEntityArgs>(TEntityArgs modelArgs) where T : ModelEntity where TEntityArgs : ModelEntityArgs<T>;
 

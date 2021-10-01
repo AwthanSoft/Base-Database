@@ -7,9 +7,9 @@ using System.Text;
 using System.Linq;
 
 //using System.Data.Entity.Migrations;
-using DBAppCore.NotifierCore.ViewEntity;
+using Mawa.DBCore.NotifierCore.ViewEntity;
 
-namespace DBAppCore.ViewEntityCore
+namespace Mawa.DBCore.ViewEntityCore
 {
     internal interface IViewEntityDBManagerCore
     {

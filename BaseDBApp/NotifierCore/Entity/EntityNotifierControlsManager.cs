@@ -1,11 +1,11 @@
 ﻿using Mawa.Lock;
-using DBAppCore.EntityCore;
+using Mawa.DBCore.EntityCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DBAppCore.NotifierCore.Entity
+namespace Mawa.DBCore.NotifierCore.Entity
 {
     class EntityNotifierControlsManager : IDisposable
     {

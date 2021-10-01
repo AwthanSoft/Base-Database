@@ -5,11 +5,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using DBAppCore.ViewEntityCore;
+using Mawa.DBCore.ViewEntityCore;
 using System.Threading.Tasks;
 using Mawa.Lock;
 
-namespace DBAppCore.ListCtrls.ViewEntity
+namespace Mawa.DBCore.ListCtrls.ViewEntity
 {
     public delegate TViewEntityModelView[] OnTViewEntityModelView_Arr_Delegate<TViewEntity ,TViewEntityModelView>()
         where TViewEntity : ViewEntityCore.ModelViewEntityCore

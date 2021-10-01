@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using DBAppCore.ViewEntityCore;
-using DBAppCore.EntityCore;
+using Mawa.DBCore.ViewEntityCore;
+using Mawa.DBCore.EntityCore;
 
-using DBAppCore.NotifierCore;
+using Mawa.DBCore.NotifierCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace DBAppCore
+namespace Mawa.DBCore
 {
     public abstract class DBManagersControlCore
     {

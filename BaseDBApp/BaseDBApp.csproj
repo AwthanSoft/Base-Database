@@ -6,6 +6,7 @@
     <Authors>AwthanSoft</Authors>
     <Description>Libraries contain some controllers, assistants, helpers, and interfaces to manage and control the operations and functions that are implemented in the database (sqlserver ,sqlite) which is built using dbContext of EntityFrameworkCore.</Description>
     <Copyright>Copyright 2021 AwthanSoft©</Copyright>
+    <RootNamespace>Mawa.DBCore</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\mawa libs\LockProject\00\LockSolution\Mawa.Lock\Mawa.Lock.csproj" />
-    <ProjectReference Include="..\..\..\..\mawa libs\MawaLibsMainProject\00\MawaLibsMainSolution\Mawa.BaseApp\Mawa.BaseApp.csproj" />
-    <ProjectReference Include="..\..\..\..\mawa libs\RandomProject\00\RandomSolution\Mawa.Random\Mawa.Random.csproj" />
+    <ProjectReference Include="..\..\..\..\LockProject\00\LockSolution\Mawa.Lock\Mawa.Lock.csproj" />
+    <ProjectReference Include="..\..\..\..\MawaLibsMainProject\00\MawaLibsMainSolution\Mawa.BaseApp\Mawa.BaseApp.csproj" />
+    <ProjectReference Include="..\..\..\..\RandomProject\00\RandomSolution\Mawa.Random\Mawa.Random.csproj" />
   </ItemGroup>
 
 </Project>

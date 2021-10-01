@@ -1,10 +1,10 @@
-﻿using DBAppCore.ViewEntityCore;
+﻿using Mawa.DBCore.ViewEntityCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBAppCore.NotifierCore.ViewEntity
+namespace Mawa.DBCore.NotifierCore.ViewEntity
 {
     abstract class ViewEntityNotifierArgsCore<T>: EventArgs
         where T : ViewEntityCore.ModelViewEntityCore
