@@ -1,4 +1,4 @@
-﻿using CommonAppCore.Locks;
+﻿using Mawa.Lock;
 using DBAppCore.EntityCore;
 //using Syncfusion.DataSource;
 using System;

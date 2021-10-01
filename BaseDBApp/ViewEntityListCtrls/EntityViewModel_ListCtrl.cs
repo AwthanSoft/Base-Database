@@ -6,8 +6,8 @@ using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using DBAppCore.ViewEntityCore;
-using CommonAppCore.Locks;
-using CommonAppCore.BaseApp;
+using Mawa.Lock;
+using Mawa.BaseApp;
 
 namespace DBAppCore.ViewEntityListCtrls
 {

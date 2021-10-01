@@ -1,4 +1,4 @@
-﻿using CommonAppCore.Locks;
+﻿using Mawa.Lock;
 using DBAppCore.ViewEntityCore;
 using System;
 using System.Collections.Generic;

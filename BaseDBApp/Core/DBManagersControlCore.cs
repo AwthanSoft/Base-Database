@@ -6,6 +6,7 @@ using DBAppCore.ViewEntityCore;
 using DBAppCore.EntityCore;
 
 using DBAppCore.NotifierCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DBAppCore
 {
@@ -128,6 +129,101 @@ namespace DBAppCore
             {
                 (dbManager as IViewEntityDBManagerCore).Refresh_Listeners();
             }
+        }
+
+        #endregion
+
+        #region Safe Executions
+
+        public void ExecuteInsideTrans(Action<IDbContextTransaction> action, out Exception exception_result)
+        {
+            exception_result = null;
+            this.open_Lock();
+            using (var dbTrns = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    action.Invoke(dbTrns);
+                    //dbTrns.Commit();
+                }
+                catch (Exception ex)
+                {
+                    exception_result = ex;
+                    dbTrns.Rollback();
+                }
+            }
+            this.close_Lock();
+        }
+
+        //public void ExecuteInsideTrans<TArgs>(Action<IDbContextTransaction, TArgs> action, TArgs args, out Exception exception_result)
+        //{
+        //    exception_result = null;
+        //    this.open_Lock();
+        //    using (var dbTrns = db.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            action.Invoke(args);
+        //            dbTrns.Commit();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            exception_result = ex;
+        //            dbTrns.Rollback();
+        //        }
+        //    }
+        //    this.close_Lock();
+        //}
+
+
+        public void ExecuteInsideTrans<TResult>(Func<TResult> predicate, out TResult Result, out Exception exception_result)
+            where TResult : class
+        {
+            exception_result = null;
+            Result = null;
+            this.open_Lock();
+            using (var dbTrns = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    Result = predicate.Invoke();
+                    if (Result != null)
+                    {
+                        dbTrns.Commit();
+                    }
+                    else
+                    {
+                        dbTrns.Rollback();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    exception_result = ex;
+                    dbTrns.Rollback();
+                }
+            }
+            this.close_Lock();
+        }
+
+        public void ExecuteInsideTrans<TResult>(Func<IDbContextTransaction, TResult> predicate, out TResult Result, out Exception exception_result)
+           where TResult : class
+        {
+            exception_result = null;
+            Result = null;
+            this.open_Lock();
+            using (var dbTrns = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    Result = predicate.Invoke(dbTrns);
+                }
+                catch (Exception ex)
+                {
+                    exception_result = ex;
+                    dbTrns.Rollback();
+                }
+            }
+            this.close_Lock();
         }
 
         #endregion

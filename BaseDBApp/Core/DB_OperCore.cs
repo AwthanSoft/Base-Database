@@ -1,4 +1,4 @@
-﻿using CommonAppCore.Locks;
+﻿using Mawa.Lock;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,6 +46,7 @@ namespace DBAppCore
 
         //abstract protected DbContextCore getDbContextCore();
         abstract protected DbContextCore getNewDbContextCore();
+        //internal DbContextCore GetNewDbContextCore() => getNewDbContextCore();
 
         #endregion
 

@@ -1,4 +1,4 @@
-﻿using CommonAppCore.Locks;
+﻿using Mawa.Lock;
 using System;
 using System.Collections.Generic;
 using System.Linq;

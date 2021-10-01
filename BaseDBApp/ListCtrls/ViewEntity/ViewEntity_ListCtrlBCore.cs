@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using CommonAppCore.Locks;
+using Mawa.Lock;
 
 namespace DBAppCore.ListCtrls.ViewEntity
 {

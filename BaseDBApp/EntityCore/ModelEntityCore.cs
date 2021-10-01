@@ -9,12 +9,13 @@ namespace DBAppCore.EntityCore
     {
         public ModelEntityCore()
         {
-            this.ObjectId = CommonAppCore.Randoms.RandomId.Object_Id();
+            this.ObjectId = Mawa.Randoms.RandomId.Object_Id();
             this.CreateDate = DateTime.Now;
             this.ModifiedDate = DateTime.Now;
         }
 
-        //[Required]
+        [Required]
+        [System.ComponentModel.DataAnnotations.Schema.Column(TypeName = "VARCHAR(20)")]
         public string ObjectId { get; set; }
 
         [Required]

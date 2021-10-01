@@ -1,5 +1,5 @@
-﻿using CommonAppCore.BaseApp;
-using CommonAppCore.Locks;
+﻿using Mawa.BaseApp;
+using Mawa.Lock;
 using DBAppCore.ViewEntityCore;
 //using Syncfusion.DataSource;
 using System;

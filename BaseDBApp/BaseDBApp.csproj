@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CommonAppsCoreMeProjects\00\CommonAppsCoreMeProjectsSolution\CommonAppCore.BaseApp\CommonAppCore.BaseApp.csproj" />
-    <ProjectReference Include="..\..\..\..\CommonAppsCoreMeProjects\00\CommonAppsCoreMeProjectsSolution\CommonAppCore.Locks\CommonAppCore.Locks.csproj" />
-    <ProjectReference Include="..\..\..\..\CommonAppsCoreMeProjects\00\CommonAppsCoreMeProjectsSolution\CommonAppCore.Randoms\CommonAppCore.Randoms.csproj" />
+    <ProjectReference Include="..\..\..\..\mawa libs\LockProject\00\LockSolution\Mawa.Lock\Mawa.Lock.csproj" />
+    <ProjectReference Include="..\..\..\..\mawa libs\MawaLibsMainProject\00\MawaLibsMainSolution\Mawa.BaseApp\Mawa.BaseApp.csproj" />
+    <ProjectReference Include="..\..\..\..\mawa libs\RandomProject\00\RandomSolution\Mawa.Random\Mawa.Random.csproj" />
   </ItemGroup>
 
 </Project>
