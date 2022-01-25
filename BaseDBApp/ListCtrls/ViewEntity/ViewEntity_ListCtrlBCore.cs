@@ -492,6 +492,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         #endregion
 
         #region Dispose
+
         private bool _disposed = false;
         protected virtual void Dispose(bool disposing)
         {

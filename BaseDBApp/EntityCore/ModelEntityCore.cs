@@ -1,32 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.ComponentModel.DataAnnotations;
+//using System.Text;
 
-namespace Mawa.DBCore.EntityCore
-{
-    public abstract class ModelEntityCore : DBModelCore
-    {
-        public ModelEntityCore()
-        {
-            this.ObjectId = Mawa.Randoms.RandomId.Object_Id();
-            this.CreateDate = DateTime.Now;
-            this.ModifiedDate = DateTime.Now;
-        }
+//namespace Mawa.DBCore.EntityCore
+//{
+//    public abstract class ModelEntityCore : DBModelCore
+//    {
+//        public ModelEntityCore()
+//        {
+//            this.ObjectId = Mawa.Randoms.RandomId.Object_Id();
+//            this.CreateDate = DateTime.Now;
+//            this.ModifiedDate = DateTime.Now;
+//        }
 
-        [Required]
-        [System.ComponentModel.DataAnnotations.Schema.Column(TypeName = "VARCHAR(20)")]
-        public string ObjectId { get; set; }
+//        [Required]
+//        [System.ComponentModel.DataAnnotations.Schema.Column(TypeName = "VARCHAR(20)")]
+//        public string ObjectId { get; set; }
 
-        [Required]
-        //[System.ComponentModel.DataAnnotations.Timestamp]
-        //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed)]
-        public System.DateTime CreateDate { get; set; }
+//        [Required]
+//        //[System.ComponentModel.DataAnnotations.Timestamp]
+//        //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed)]
+//        public System.DateTime CreateDate { get; set; }
 
-        [Required]
-        //[System.ComponentModel.DataAnnotations.Timestamp]
-        //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed)]
-        public System.DateTime ModifiedDate { get; set; }
+//        [Required]
+//        //[System.ComponentModel.DataAnnotations.Timestamp]
+//        //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Computed)]
+//        public System.DateTime ModifiedDate { get; set; }
 
-    }
-}
+//    }
+//}

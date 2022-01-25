@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\..\..\LockProject\00\LockSolution\Mawa.Lock\Mawa.Lock.csproj" />
     <ProjectReference Include="..\..\..\..\MawaLibsMainProject\00\MawaLibsMainSolution\Mawa.BaseApp\Mawa.BaseApp.csproj" />
     <ProjectReference Include="..\..\..\..\RandomProject\00\RandomSolution\Mawa.Random\Mawa.Random.csproj" />
+    <ProjectReference Include="..\Mawa.BaseDBCore\Mawa.BaseDBCore.csproj" />
   </ItemGroup>
 
 </Project>

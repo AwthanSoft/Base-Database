@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mawa.Random", "..\..\..\Ran
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mawa.BaseApp", "..\..\..\MawaLibsMainProject\00\MawaLibsMainSolution\Mawa.BaseApp\Mawa.BaseApp.csproj", "{C21FB78A-CBD8-436B-B26A-81345A3A154C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mawa.BaseDBCore", "Mawa.BaseDBCore\Mawa.BaseDBCore.csproj", "{B4615194-B4D8-4FBA-82C1-C8210F4FF630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{C21FB78A-CBD8-436B-B26A-81345A3A154C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C21FB78A-CBD8-436B-B26A-81345A3A154C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C21FB78A-CBD8-436B-B26A-81345A3A154C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4615194-B4D8-4FBA-82C1-C8210F4FF630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4615194-B4D8-4FBA-82C1-C8210F4FF630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4615194-B4D8-4FBA-82C1-C8210F4FF630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4615194-B4D8-4FBA-82C1-C8210F4FF630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
