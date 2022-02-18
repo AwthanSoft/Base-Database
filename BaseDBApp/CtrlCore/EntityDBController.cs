@@ -11,7 +11,7 @@ namespace Mawa.DBCore.CtrlCore
     {
         #region Singleton
 
-        public EntityDBController(DBManagersControlCore dBManagerCore) :base(dBManagerCore)
+        public EntityDBController(DBManagersControlCore dBManagerCore, TId defualtNull) :base(dBManagerCore, defualtNull)
         {
             pre_refresh();
         }

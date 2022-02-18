@@ -2,9 +2,8 @@
 
 namespace Mawa.DBCore.NotifierCore
 {
-    public delegate void OnModel_Notify_Delegate<T, TId>(DBModelNotifierType NotifierType, TId? ModelId = null, T model = null)
-        where T : class, IDBModelCore
-        where TId : struct;
+    public delegate void OnModel_Notify_Delegate<T, TId>(DBModelNotifierType NotifierType, TId ModelId, T model = null)
+        where T : class, IDBModelCore;
     //public delegate void OnModel_Insert_Delegate<T>(T model) where T : class, IDBModelCore;
     //public delegate void OnModel_Update_Delegate<T>(T model) where T : class, IDBModelCore;
     //public delegate void OnModel_Delete_Delegate<T, TId>(TId ModelId, T model = null) where T : class, IDBModelCore;
@@ -12,7 +11,6 @@ namespace Mawa.DBCore.NotifierCore
 
     public class ModelEventNotifier<T, TId>
         where T : class, IDBModelCore
-        where TId : struct
     {
         public ModelEventNotifier()
         {
@@ -56,7 +54,7 @@ namespace Mawa.DBCore.NotifierCore
 
         //General
         public event OnModel_Notify_Delegate<T, TId> OnModel_Notify;
-        internal virtual void Model_Notify(DBModelNotifierType NotifierType, TId? ModelId = null, T model = null)
+        internal virtual void Model_Notify(DBModelNotifierType NotifierType, TId ModelId, T model = null)
         {
             if (OnModel_Notify != null)
             {

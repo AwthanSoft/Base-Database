@@ -5,26 +5,21 @@ namespace Mawa.DBCore.NotifierCore
 {
     abstract class ModelNotifierArgsCore<T, TId> : EventArgs
         where T : class,IDBModelCore
-        where TId : struct
     {
         readonly public T model;
         readonly public TId modelId;
         public readonly DBModelNotifierType notifierType;
-        public ModelNotifierArgsCore(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        public ModelNotifierArgsCore(DBModelNotifierType notifierType, TId modelId, T model = null)
         {
             this.notifierType = notifierType;
             this.model = model;
-            if(modelId != null)
-            {
-                this.modelId = modelId.Value;
-            }
+            this.modelId = modelId;
         }
     }
     class ModelNotifierArgs<T, TId> : ModelNotifierArgsCore<T, TId>
         where T : class, IDBModelCore
-        where TId : struct
     {
-        public ModelNotifierArgs(DBModelNotifierType notifierType, TId? modelId = null, T model = null) : base(notifierType, modelId, model)
+        public ModelNotifierArgs(DBModelNotifierType notifierType, TId modelId, T model = null) : base(notifierType, modelId, model)
         {
 
         }

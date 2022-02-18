@@ -12,7 +12,6 @@ namespace Mawa.DBCore.NotifierCore
     }
     class ModelNotifierControl<T, TId> : IModelNotifierControl, IDisposable
         where T : class, IDBModelCore
-        where TId : struct
     {
         #region Initail
         //readonly public Type EntityType = typeof(T);

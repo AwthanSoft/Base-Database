@@ -35,7 +35,7 @@ namespace Mawa.DBCore.NotifierCore
         }
         internal void AddNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
             where T : class, IDBModelCore
-            where TId : struct
+ 
         {
             if (!notifiers_Dic.ContainsKey(typeof(T)))
             {
@@ -49,7 +49,6 @@ namespace Mawa.DBCore.NotifierCore
 
         ModelNotifierControl<T, TId> getModelNotifierCtrl<T, TId>()
             where T : class, IDBModelCore
-            where TId : struct
         {
             return notifiers_Dic[typeof(T)] as ModelNotifierControl<T, TId>;
         }
@@ -65,7 +64,6 @@ namespace Mawa.DBCore.NotifierCore
         }
         void _AddNotify_ToTemp<T, TId>(ModelNotifierArgsCore<T, TId> modelNotifierArgs)
             where T : class, IDBModelCore
-            where TId : struct
         {
             addToTemp_Lock.open_lock();
             getModelNotifierCtrl<T, TId>().AddNotify_ToTemp(modelNotifierArgs);
@@ -74,7 +72,7 @@ namespace Mawa.DBCore.NotifierCore
         }
         void _AddNotify_ToTemp<T, TId>(ModelNotifierArgsCore<T, TId>[] modelNotifierArgs)
             where T : class, IDBModelCore
-            where TId : struct
+ 
         {
             addToTemp_Lock.open_lock();
             getModelNotifierCtrl<T, TId>().AddNotify_ToTemp(modelNotifierArgs);
@@ -90,7 +88,6 @@ namespace Mawa.DBCore.NotifierCore
         //General Notify
         public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId)
           where T : class, IDBModelCore
-          where TId : struct
         {
             lock (objectLock.opening_Lock)
             {
@@ -99,46 +96,42 @@ namespace Mawa.DBCore.NotifierCore
         }
         void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId)
             where T : class, IDBModelCore
-            where TId : struct
         {
             _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, modelId, null));
         }
 
-        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T model)
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T model, TId defualtNull)
           where T : class, IDBModelCore
-          where TId : struct
         {
             lock (objectLock.opening_Lock)
             {
-                _ModelNotify<T, TId>(notifierType, model);
+                _ModelNotify<T, TId>(notifierType, model, defualtNull);
             }
         }
-        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T model)
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T model, TId defualtNull)
             where T : class, IDBModelCore
-            where TId : struct
         {
-            _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, null, model));
+            _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, defualtNull, model));
         }
 
-        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId, T model = null)
             where T : class, IDBModelCore
-            where TId : struct
         {
             lock(objectLock.opening_Lock)
             {
                 _ModelNotify(notifierType, modelId, model);
             }
         }
-        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+
+
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId, T model = null)
             where T : class, IDBModelCore
-            where TId : struct
         {
             _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, modelId, model));
         }
 
         public void ModelNotify<T, TId>(DBModelNotifierType notifierType, Dictionary<TId, T> dic)
            where T : class, IDBModelCore
-           where TId : struct
         {
             lock (objectLock.opening_Lock)
             {
@@ -147,30 +140,28 @@ namespace Mawa.DBCore.NotifierCore
         }
         void _ModelNotify<T, TId>(DBModelNotifierType notifierType, Dictionary<TId,T> dic)
             where T : class, IDBModelCore
-            where TId : struct
         {
             _AddNotify_ToTemp(dic.Select(m => new ModelNotifierArgs<T, TId>(notifierType, m.Key, m.Value)).ToArray());
         }
 
-        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models)
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models, TId defualtNull)
             where T : class, IDBModelCore
-            where TId : struct
         {
             lock (objectLock.opening_Lock)
             {
-                _ModelNotify<T, TId>(notifierType, models);
+                _ModelNotify<T, TId>(notifierType, models, defualtNull);
             }
         }
-        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models)
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models, TId defualtNull)
             where T : class, IDBModelCore
-            where TId : struct
+ 
         {
-            _AddNotify_ToTemp(models.Select(m => new ModelNotifierArgs<T, TId>(notifierType, null, m)).ToArray());
+            _AddNotify_ToTemp(models.Select(m => new ModelNotifierArgs<T, TId>(notifierType, defualtNull, m)).ToArray());
         }
 
         public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId[] modelIds)
             where T : class, IDBModelCore
-            where TId : struct
+ 
         {
             lock (objectLock.opening_Lock)
             {
@@ -179,7 +170,7 @@ namespace Mawa.DBCore.NotifierCore
         }
         void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId[] modelIds)
             where T : class, IDBModelCore
-            where TId : struct
+ 
         {
             _AddNotify_ToTemp(modelIds.Select(m => new ModelNotifierArgs<T, TId>(notifierType, m, null)).ToArray());
         }

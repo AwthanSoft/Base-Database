@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Mawa.BaseDBCore.ViewEntityCore;
 
 //using System.Data.Entity.Migrations;
@@ -11,11 +12,10 @@ namespace Mawa.DBCore.ViewEntityCore
     }
     public abstract class ViewEntityDBManagerCore<T, TId> : ModelDBController<T, TId> , IViewEntityDBManagerCore
         where T: class, IModelViewEntityCore
-        where TId : struct
     {
         #region Singleton
 
-        public ViewEntityDBManagerCore(DBManagersControlCore dBManagerCore) : base(dBManagerCore)
+        public ViewEntityDBManagerCore(DBManagersControlCore dBManagerCore, TId defualtNull) : base(dBManagerCore, defualtNull)
         {
             pre_refresh();
         }

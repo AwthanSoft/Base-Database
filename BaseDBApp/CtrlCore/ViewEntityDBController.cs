@@ -11,7 +11,7 @@ namespace Mawa.DBCore.CtrlCore
     {
         #region Initial
 
-        public ViewEntityDBController(DBManagersControlCore dBManagerCore) : base(dBManagerCore)
+        public ViewEntityDBController(DBManagersControlCore dBManagerCore, TId defualtNull) : base(dBManagerCore, defualtNull)
         {
             pre_refresh();
         }

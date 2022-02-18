@@ -23,7 +23,7 @@ namespace Mawa.DBCore
 
     public class ModelDBController<T, TId> : IModelDBController<T>
         where T: class ,IDBModelCore
-        where TId : struct
+
     {
         #region For Internal Extension
         internal DbSet<T> db_Model_Ex => db_Model;
@@ -39,9 +39,12 @@ namespace Mawa.DBCore
         protected DbContextCore dbContextCore => dBManagerCore.dbContextCore;
         protected DbContext db { get { return dBManagerCore.db; } }
         protected virtual DbSet<T> db_Model { get { return dbContextCore.db_Model(typeof(T)) as DbSet<T>; } }
-        
-        public ModelDBController(DBManagersControlCore dBManager)
+
+        protected readonly TId defualtNull;
+
+        public ModelDBController(DBManagersControlCore dBManager, TId defualtNull)
         {
+            this.defualtNull = defualtNull;
             this.dBManagerCore = dBManager;
             modelEventNotifier = new ModelEventNotifier<T, TId>();
             pre_refresh();
@@ -539,7 +542,7 @@ namespace Mawa.DBCore
         }
         protected void _ModelNotify(DBModelNotifierType notifierType, T model)
         {
-            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, model);
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, model, defualtNull);
         }
 
         public void ModelNotify(DBModelNotifierType notifierType, TId modelId)
@@ -554,14 +557,14 @@ namespace Mawa.DBCore
             dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, modelId);
         }
 
-        public void ModelNotify(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        public void ModelNotify(DBModelNotifierType notifierType, TId modelId, T model = null)
         {
             //lock(dbLocker.opening_Lock) // because it loacked by notifier manager
             {
                 _ModelNotify(notifierType, modelId, model);
             }
         }
-        protected void _ModelNotify(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        protected void _ModelNotify(DBModelNotifierType notifierType, TId modelId, T model = null)
         {
             dBManagerCore.modelNotifierControlsManager.ModelNotify(notifierType, modelId, model);
         }
@@ -599,7 +602,7 @@ namespace Mawa.DBCore
         }
         protected void _ModelNotify(DBModelNotifierType notifierType, T[] models)
         {
-            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models);
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models, defualtNull);
         }
 
         #endregion
