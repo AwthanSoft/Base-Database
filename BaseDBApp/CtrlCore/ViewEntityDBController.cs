@@ -1,18 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Linq;
 
 //using System.Data.Entity.Migrations;
-using Mawa.DBCore.ViewEntityCore;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore.CtrlCore
 {
-    public sealed class ViewEntityDBController<T> : ModelDBController<T>
-        where T: ModelViewEntityCore 
+    public sealed class ViewEntityDBController<T, TId> : ModelDBController<T, TId>
+        where T: ModelViewEntityCore
+        where TId : struct
     {
         #region Initial
 

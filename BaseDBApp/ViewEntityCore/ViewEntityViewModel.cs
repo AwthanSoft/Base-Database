@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mawa.BaseDBCore.ViewEntityCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;

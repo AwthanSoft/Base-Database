@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Mawa.DBCore.NotifierCore
 {
-    enum DBModelNotifierType
+    public enum DBModelNotifierType
     {
         Insert,
         Update,

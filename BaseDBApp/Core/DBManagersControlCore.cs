@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Mawa.DBCore.ViewEntityCore;
-using Mawa.DBCore.EntityCore;
 
 using Mawa.DBCore.NotifierCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Mawa.Lock;
+using Mawa.BaseDBCore.EntityCore;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore
 {
@@ -15,9 +17,7 @@ namespace Mawa.DBCore
         #region Singleton
 
         readonly internal ModelNotifierControlsManager modelNotifierControlsManager;
-        //readonly internal EntityNotifierControlsManager entityNotifierControlsManager;
-        //readonly internal ViewEntityNotifierControlsManager viewEntityNotifierControlsManager;
-        
+
 
         readonly DB_OperCore _dB_oper;
         protected DB_OperCore dB_oper => _dB_oper;
@@ -25,12 +25,12 @@ namespace Mawa.DBCore
         internal DbContext db => dB_oper.db;
         internal DbContextCore dbContextCore => dB_oper.dbContextCore;
 
+        internal ObjectLock dbLocker => dB_oper.dbLocker;
+
         public DBManagersControlCore(DB_OperCore dB_oper)
         {
             this._dB_oper = dB_oper;
-            modelNotifierControlsManager = new ModelNotifierControlsManager(this);
-            //entityNotifierControlsManager = new EntityNotifierControlsManager(this);
-            //viewEntityNotifierControlsManager = new ViewEntityNotifierControlsManager(this);
+            modelNotifierControlsManager = new ModelNotifierControlsManager();
         }
 
         protected void startInitial()
@@ -83,19 +83,6 @@ namespace Mawa.DBCore
             }
         }
 
-        //public EntityDBManager<TEntity, ModelEntityArgs<TEntity>> GetAppDBManagersControl<TEntity>()
-        //    where TEntity : ModelEntity
-        //{
-        //    var resultt = _EntityManager_types_dic[typeof(TEntity)];
-        //    return resultt as EntityDBManager<TEntity, ModelEntityArgs<TEntity>>;
-        //}
-
-        internal EntityDBManagerCore<TEntity, TEntityArgs> GetEntityDBManager<TEntity, TEntityArgs>()
-            where TEntity : ModelEntityCore
-            where TEntityArgs : EntityArgsCore<TEntity>
-        {
-            return _EntityManager_types_dic[typeof(TEntity)] as EntityDBManagerCore<TEntity, TEntityArgs>;
-        }
 
         #endregion
 
@@ -114,11 +101,11 @@ namespace Mawa.DBCore
                 }
             }
         }
-        internal ViewEntityDBManagerCore<TViewEntity> GetViewEntityDBManager<TViewEntity>()
-            where TViewEntity : ViewEntityCore.ModelViewEntityCore
-        {
-            return _ViewEntityManager_types_dic[typeof(TViewEntity)] as ViewEntityDBManagerCore<TViewEntity>;
-        }
+        //internal ViewEntityDBManagerCore<TViewEntity> GetViewEntityDBManager<TViewEntity>()
+        //    where TViewEntity : IModelViewEntityCore
+        //{
+        //    return _ViewEntityManager_types_dic[typeof(TViewEntity)] as ViewEntityDBManagerCore<TViewEntity>;
+        //}
 
         #endregion
 

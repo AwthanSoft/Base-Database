@@ -23,8 +23,8 @@ namespace Mawa.DBCore
 
         #region Lock Driver Properties
 
-        private ObjectLock objectLock = new ObjectLock();
-        //public ObjectLock DBLock => objectLock;
+        private readonly ObjectLock objectLock = new ObjectLock();
+        internal ObjectLock dbLocker => objectLock;
         public object DBOpeningLock => objectLock.opening_Lock;
 
         public void open_Lock()

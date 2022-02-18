@@ -1,6 +1,5 @@
 ﻿using Mawa.BaseApp;
 using Mawa.Lock;
-using Mawa.DBCore.ViewEntityCore;
 //using Syncfusion.DataSource;
 using System;
 using System.Collections.Generic;
@@ -10,12 +9,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
-
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore.ViewEntityListCtrls
 {
 
-    public abstract class ViewEntity_ListCtrl<TViewEntity> where TViewEntity : ViewEntityCore.ModelViewEntityCore ,IDisposable , INotifyPropertyChanged
+    public abstract class ViewEntity_ListCtrl<TViewEntity> where TViewEntity : ModelViewEntityCore ,IDisposable , INotifyPropertyChanged
     {
         #region Initilal
 

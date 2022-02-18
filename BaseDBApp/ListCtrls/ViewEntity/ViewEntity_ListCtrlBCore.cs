@@ -7,17 +7,18 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Mawa.Lock;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore.ListCtrls.ViewEntity
 {
     public delegate TViewEntity[] OnTViewEntity_Arr_Delegate<TViewEntity>()
-    where TViewEntity : ViewEntityCore.ModelViewEntityCore;
+    where TViewEntity : ModelViewEntityCore;
 
     public delegate TViewEntity[] OnViewEntity_SearchArr_Delegate<TViewEntity>(string searchStr)
-    where TViewEntity : ViewEntityCore.ModelViewEntityCore;
+    where TViewEntity : ModelViewEntityCore;
     
     public abstract class ViewEntity_ListCtrlBCore<TViewEntity> : IDisposable, INotifyPropertyChanged
-        where TViewEntity : ViewEntityCore.ModelViewEntityCore
+        where TViewEntity : ModelViewEntityCore
     {
 
         #region Initilal

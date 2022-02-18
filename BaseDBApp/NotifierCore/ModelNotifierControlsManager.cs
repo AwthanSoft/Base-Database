@@ -1,46 +1,28 @@
-﻿using Mawa.Lock;
+﻿using Mawa.BaseDBCore;
+using Mawa.Lock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mawa.DBCore.NotifierCore
 {
-   
     class ModelNotifierControlsManager : IDisposable
     {
         #region Initail
-        readonly DBManagersControlCore dbManagerCore;
-        public ModelNotifierControlsManager(DBManagersControlCore dbManagersControlCore)
+        
+        private readonly ObjectLock objectLock;
+        public ModelNotifierControlsManager()
         {
-            this.dbManagerCore = dbManagersControlCore;
+            objectLock = new ObjectLock();
             pre_refresh();
         }
         private void pre_refresh()
         {
-            objectLock = new ObjectLock();
             pre_refresh_Notifiers();
             pre_refresh_NotifyList();
             pre_refresh_Operations();
         }
-
-        #region Lock Base Properties
-        private ObjectLock objectLock;
-
-        public void open_Lock()
-        {
-            //appControl.open_Lock();
-            objectLock.open_lock();
-        }
-        public void close_Lock()
-        {
-            //appControl.close_Lock();
-            objectLock.close_lock();
-        }
-
-        #endregion
-
         #endregion
 
         #region Notifiers
@@ -51,12 +33,13 @@ namespace Mawa.DBCore.NotifierCore
         {
             notifiers_Dic = new Dictionary<Type, object>();
         }
-        internal void AddNotifier<T>(ModelEventNotifier<T> modelEventNotifier)
-            where T : DBModelCore
+        internal void AddNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
+            where T : class, IDBModelCore
+            where TId : struct
         {
             if (!notifiers_Dic.ContainsKey(typeof(T)))
             {
-                notifiers_Dic.Add(typeof(T), new ModelNotifierControl<T>(modelEventNotifier));
+                notifiers_Dic.Add(typeof(T), new ModelNotifierControl<T, TId>(modelEventNotifier));
             }
             else
             {
@@ -64,10 +47,11 @@ namespace Mawa.DBCore.NotifierCore
             }
         }
 
-        ModelNotifierControl<T> getModelNotifierCtrl<T>()
-            where T : DBModelCore
+        ModelNotifierControl<T, TId> getModelNotifierCtrl<T, TId>()
+            where T : class, IDBModelCore
+            where TId : struct
         {
-            return notifiers_Dic[typeof(T)] as ModelNotifierControl<T>;
+            return notifiers_Dic[typeof(T)] as ModelNotifierControl<T, TId>;
         }
 
         #endregion
@@ -79,19 +63,21 @@ namespace Mawa.DBCore.NotifierCore
         {
             addToTemp_Lock = new ObjectLock();
         }
-        void _AddNotify_ToTemp<T>(ModelNotifierArgsCore<T> modelNotifierArgs)
-            where T : DBModelCore
+        void _AddNotify_ToTemp<T, TId>(ModelNotifierArgsCore<T, TId> modelNotifierArgs)
+            where T : class, IDBModelCore
+            where TId : struct
         {
             addToTemp_Lock.open_lock();
-            getModelNotifierCtrl<T>().AddNotify_ToTemp(modelNotifierArgs);
+            getModelNotifierCtrl<T, TId>().AddNotify_ToTemp(modelNotifierArgs);
             addToTemp_Lock.close_lock();
             refreshOperation();
         }
-        void _AddNotify_ToTemp<T>(ModelNotifierArgsCore<T>[] modelNotifierArgs)
-            where T : DBModelCore
+        void _AddNotify_ToTemp<T, TId>(ModelNotifierArgsCore<T, TId>[] modelNotifierArgs)
+            where T : class, IDBModelCore
+            where TId : struct
         {
             addToTemp_Lock.open_lock();
-            getModelNotifierCtrl<T>().AddNotify_ToTemp(modelNotifierArgs);
+            getModelNotifierCtrl<T, TId>().AddNotify_ToTemp(modelNotifierArgs);
             addToTemp_Lock.close_lock();
             refreshOperation();
         }
@@ -100,93 +86,103 @@ namespace Mawa.DBCore.NotifierCore
 
         #region NotifyList Operation
 
-        //add
-        public void InsertNotiFy<T>(T model)
-            where T : DBModelCore
+
+        //General Notify
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId)
+          where T : class, IDBModelCore
+          where TId : struct
         {
-            open_Lock();
-            _InsertNotiFy<T>(model);
-            close_Lock();
+            lock (objectLock.opening_Lock)
+            {
+                _ModelNotify<T, TId>(notifierType, modelId);
+            }
         }
-        void _InsertNotiFy<T>(T model)
-            where T : DBModelCore
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId modelId)
+            where T : class, IDBModelCore
+            where TId : struct
         {
-            _AddNotify_ToTemp(new InsertModelNotifierArgs<T>(model));
-        }
-        public void InsertNotiFy<T>(T[] models)
-            where T : DBModelCore
-        {
-            open_Lock();
-            _InsertNotiFy<T>(models);
-            close_Lock();
-        }
-        void _InsertNotiFy<T>(T[] entities)
-            where T : DBModelCore
-        {
-            //var temp_args_list = new List<InsertModelNotifierArgs<T>>();
-            //foreach(var model in entities)
-            //{
-            //    temp_args_list.Add(new InsertModelNotifierArgs<T>(model));
-            //}
-            //_AddNotify_ToTemp(temp_args_list.ToArray());
-            _AddNotify_ToTemp((from b in entities select new InsertModelNotifierArgs<T>(b)).ToArray());
-        }
-        //Update
-        public void UpdateNotiFy<T>(T model)
-            where T : DBModelCore
-        {
-            open_Lock();
-            _UpdateNotiFy<T>(model);
-            close_Lock();
-        }
-        void _UpdateNotiFy<T>(T model)
-            where T : DBModelCore
-        {
-            _AddNotify_ToTemp(new UpdateModelNotifierArgs<T>(model));
+            _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, modelId, null));
         }
 
-        //Deleted
-        public void DeleteNotiFy<T>(T model)
-            where T : DBModelCore
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T model)
+          where T : class, IDBModelCore
+          where TId : struct
         {
-            open_Lock();
-            _DeleteNotiFy<T>(model);
-            close_Lock();
+            lock (objectLock.opening_Lock)
+            {
+                _ModelNotify<T, TId>(notifierType, model);
+            }
         }
-        void _DeleteNotiFy<T>(T model)
-            where T : DBModelCore
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T model)
+            where T : class, IDBModelCore
+            where TId : struct
         {
-            _AddNotify_ToTemp(new DeleteModelNotifierArgs<T>(model));
-        }
-        public void DeleteNotiFy<T>(T[] models)
-            where T : DBModelCore
-        {
-            open_Lock();
-            _DeleteNotiFy<T>(models);
-            close_Lock();
-        }
-        void _DeleteNotiFy<T>(T[] models)
-            where T : DBModelCore
-        {
-            _AddNotify_ToTemp((from b in models select new DeleteModelNotifierArgs<T>(b)).ToArray());
+            _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, null, model));
         }
 
-
-
-        //Refresh
-        public void RefreshNotiFy<T>()
-            where T : DBModelCore
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+            where T : class, IDBModelCore
+            where TId : struct
         {
-            open_Lock();
-            _RefreshNotiFy<T>();
-            close_Lock();
+            lock(objectLock.opening_Lock)
+            {
+                _ModelNotify(notifierType, modelId, model);
+            }
         }
-        void _RefreshNotiFy<T>()
-            where T : DBModelCore
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+            where T : class, IDBModelCore
+            where TId : struct
         {
-            _AddNotify_ToTemp(new RefreshModelNotifierArgs<T>());
+            _AddNotify_ToTemp(new ModelNotifierArgs<T, TId>(notifierType, modelId, model));
         }
 
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, Dictionary<TId, T> dic)
+           where T : class, IDBModelCore
+           where TId : struct
+        {
+            lock (objectLock.opening_Lock)
+            {
+                _ModelNotify(notifierType, dic);
+            }
+        }
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, Dictionary<TId,T> dic)
+            where T : class, IDBModelCore
+            where TId : struct
+        {
+            _AddNotify_ToTemp(dic.Select(m => new ModelNotifierArgs<T, TId>(notifierType, m.Key, m.Value)).ToArray());
+        }
+
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models)
+            where T : class, IDBModelCore
+            where TId : struct
+        {
+            lock (objectLock.opening_Lock)
+            {
+                _ModelNotify<T, TId>(notifierType, models);
+            }
+        }
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, T[] models)
+            where T : class, IDBModelCore
+            where TId : struct
+        {
+            _AddNotify_ToTemp(models.Select(m => new ModelNotifierArgs<T, TId>(notifierType, null, m)).ToArray());
+        }
+
+        public void ModelNotify<T, TId>(DBModelNotifierType notifierType, TId[] modelIds)
+            where T : class, IDBModelCore
+            where TId : struct
+        {
+            lock (objectLock.opening_Lock)
+            {
+                _ModelNotify<T, TId>(notifierType, modelIds);
+            }
+        }
+        void _ModelNotify<T, TId>(DBModelNotifierType notifierType, TId[] modelIds)
+            where T : class, IDBModelCore
+            where TId : struct
+        {
+            _AddNotify_ToTemp(modelIds.Select(m => new ModelNotifierArgs<T, TId>(notifierType, m, null)).ToArray());
+        }
 
         #endregion
 

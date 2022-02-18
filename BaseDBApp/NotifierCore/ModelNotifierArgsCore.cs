@@ -1,62 +1,75 @@
-﻿using Mawa.DBCore.ViewEntityCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Mawa.BaseDBCore;
 
 namespace Mawa.DBCore.NotifierCore
 {
-    abstract class ModelNotifierArgsCore<T>: EventArgs
-        where T : DBModelCore
+    abstract class ModelNotifierArgsCore<T, TId> : EventArgs
+        where T : class,IDBModelCore
+        where TId : struct
     {
-        //public readonly Type entityType = typeof(T);
         readonly public T model;
+        readonly public TId modelId;
         public readonly DBModelNotifierType notifierType;
-        public ModelNotifierArgsCore(T entity, DBModelNotifierType notifierType)
+        public ModelNotifierArgsCore(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
         {
             this.notifierType = notifierType;
-            this.model = entity;
+            this.model = model;
+            if(modelId != null)
+            {
+                this.modelId = modelId.Value;
+            }
         }
     }
-
-
-    class InsertModelNotifierArgs<T> : ModelNotifierArgsCore<T>
-        where T : DBModelCore
+    class ModelNotifierArgs<T, TId> : ModelNotifierArgsCore<T, TId>
+        where T : class, IDBModelCore
+        where TId : struct
     {
-        //readonly public EntityEntry<T> entityEntry;
-        public InsertModelNotifierArgs(T entity) : base(entity, DBModelNotifierType.Insert)
-        {
-
-        }
-    }
-    class UpdateModelNotifierArgs<T> : ModelNotifierArgsCore<T>
-        where T : DBModelCore
-    {
-        //readonly public EntityEntry<T> entityEntry;
-        public UpdateModelNotifierArgs(T entity) : base(entity, DBModelNotifierType.Update)
-        {
-
-        }
-    }
-
-    class DeleteModelNotifierArgs<T> : ModelNotifierArgsCore<T>
-        where T : DBModelCore
-    {
-        //readonly public EntityEntry<T> entityEntry;
-        public DeleteModelNotifierArgs(T entity) : base(entity, DBModelNotifierType.Delete)
+        public ModelNotifierArgs(DBModelNotifierType notifierType, TId? modelId = null, T model = null) : base(notifierType, modelId, model)
         {
 
         }
     }
 
 
-    class RefreshModelNotifierArgs<T> : ModelNotifierArgsCore<T>
-        where T : DBModelCore
-    {
-        //readonly public EntityEntry<T> entityEntry;
-        public RefreshModelNotifierArgs() : base(null, DBModelNotifierType.Refresh)
-        {
+    //class InsertModelNotifierArgs<T> : ModelNotifierArgsCore<T>
+    //    where T : class, IDBModelCore
+    //{
+    //    //readonly public EntityEntry<T> entityEntry;
+    //    public InsertModelNotifierArgs(T entity) : base(entity, DBModelNotifierType.Insert)
+    //    {
 
-        }
-    }
+    //    }
+    //}
+    //class UpdateModelNotifierArgs<T> : ModelNotifierArgsCore<T>
+    //    where T : class, IDBModelCore
+    //{
+    //    //readonly public EntityEntry<T> entityEntry;
+    //    public UpdateModelNotifierArgs(T entity) : base(entity, DBModelNotifierType.Update)
+    //    {
+
+    //    }
+    //}
+
+    //class DeleteModelNotifierArgs<T> : ModelNotifierArgsCore<T>
+    //    where T : class, IDBModelCore
+    //{
+    //    //readonly public EntityEntry<T> entityEntry;
+    //    public readonly object ModelId;
+
+    //    public DeleteModelNotifierArgs(object ModelId, T entity = null) : base(entity, DBModelNotifierType.Delete)
+    //    {
+    //        this.ModelId = ModelId;
+    //    }
+    //}
+
+
+    //class RefreshModelNotifierArgs<T> : ModelNotifierArgsCore<T>
+    //    where T : class, IDBModelCore
+    //{
+    //    //readonly public EntityEntry<T> entityEntry;
+    //    public RefreshModelNotifierArgs() : base(null, DBModelNotifierType.Refresh)
+    //    {
+
+    //    }
+    //}
 }

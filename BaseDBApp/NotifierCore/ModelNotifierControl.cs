@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mawa.BaseDBCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,13 +10,14 @@ namespace Mawa.DBCore.NotifierCore
         void moveList_ToTemp();
         void refreshOperation();
     }
-    class ModelNotifierControl<T> : IModelNotifierControl, IDisposable
-        where T : DBModelCore
+    class ModelNotifierControl<T, TId> : IModelNotifierControl, IDisposable
+        where T : class, IDBModelCore
+        where TId : struct
     {
         #region Initail
         //readonly public Type EntityType = typeof(T);
-        readonly ModelEventNotifier<T> modelEventNotifier;
-        public ModelNotifierControl(ModelEventNotifier<T> modelEventNotifier)
+        readonly ModelEventNotifier<T, TId> modelEventNotifier;
+        public ModelNotifierControl(ModelEventNotifier<T, TId> modelEventNotifier)
         {
             this.modelEventNotifier = modelEventNotifier;
             pre_refresh();
@@ -31,16 +33,16 @@ namespace Mawa.DBCore.NotifierCore
 
         #region NotifyList
 
-        List<ModelNotifierArgsCore<T>> modelNotifierArgs_list;
+        List<ModelNotifierArgsCore<T, TId>> modelNotifierArgs_list;
         void pre_refresh_NotifyList()
         {
-            modelNotifierArgs_list = new List<ModelNotifierArgsCore<T>>();
+            modelNotifierArgs_list = new List<ModelNotifierArgsCore<T, TId>>();
         }
-        internal void AddNotify_ToTemp(ModelNotifierArgsCore<T> modelNotifierArgs)
+        internal void AddNotify_ToTemp(ModelNotifierArgsCore<T, TId> modelNotifierArgs)
         {
             modelNotifierArgs_list.Add(modelNotifierArgs);
         }
-        internal void AddNotify_ToTemp(ModelNotifierArgsCore<T>[] modelNotifierArgs)
+        internal void AddNotify_ToTemp(ModelNotifierArgsCore<T, TId>[] modelNotifierArgs)
         {
             modelNotifierArgs_list.AddRange(modelNotifierArgs);
         }
@@ -48,10 +50,10 @@ namespace Mawa.DBCore.NotifierCore
         #endregion
 
         #region Operation
-        List<ModelNotifierArgsCore<T>> tempList_modelNotifierArgs;
+        List<ModelNotifierArgsCore<T, TId>> tempList_modelNotifierArgs;
         void pre_refresh_Operations()
         {
-            tempList_modelNotifierArgs = new List<ModelNotifierArgsCore<T>>();
+            tempList_modelNotifierArgs = new List<ModelNotifierArgsCore<T, TId>>();
         }
 
         public void moveList_ToTemp()
@@ -64,50 +66,52 @@ namespace Mawa.DBCore.NotifierCore
             foreach (var arg in tempList_modelNotifierArgs)
             {
                 //as temp : out of the try
-                _DoNotifiyEntity(arg);
-                /*try
+                try
                 {
-
+                    _DoNotifiyEntity(arg);
                 }
-                catch
+                catch(Exception ex)
                 {
-
-                }*/
+                    //as temp
+                    throw ex;
+                }
             }
             tempList_modelNotifierArgs.Clear();
         }
 
 
-        void _DoNotifiyEntity(ModelNotifierArgsCore<T> modelNotifierArgs)
+        void _DoNotifiyEntity(ModelNotifierArgsCore<T, TId> modelNotifierArgs)
         {
-            switch (modelNotifierArgs.notifierType)
-            {
-                case DBModelNotifierType.Insert:
-                    {
-                        modelEventNotifier.Model_Add(modelNotifierArgs.model);
-                        break;
-                    }
-                case DBModelNotifierType.Update:
-                    {
-                        modelEventNotifier.Model_Update(modelNotifierArgs.model);
-                        break;
-                    }
-                case DBModelNotifierType.Delete:
-                    {
-                        modelEventNotifier.Model_Remove(modelNotifierArgs.model);
-                        break;
-                    }
-                case DBModelNotifierType.Refresh:
-                    {
-                        modelEventNotifier.Model_Refresh(modelNotifierArgs.model);
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception();
-                        //break;
-                    }
-            }
+            modelEventNotifier.Model_Notify(modelNotifierArgs.notifierType, modelNotifierArgs.modelId, modelNotifierArgs.model);
+
+            //switch (modelNotifierArgs.notifierType)
+            //{
+            //    case DBModelNotifierType.Insert:
+            //        {
+            //            modelEventNotifier.GetHashCode(modelNotifierArgs.model);
+            //            break;
+            //        }
+            //    case DBModelNotifierType.Update:
+            //        {
+            //            modelEventNotifier.Model_Update(modelNotifierArgs.model);
+            //            break;
+            //        }
+            //    case DBModelNotifierType.Delete:
+            //        {
+            //            modelEventNotifier.Model_Remove(modelNotifierArgs.model);
+            //            break;
+            //        }
+            //    case DBModelNotifierType.Refresh:
+            //        {
+            //            modelEventNotifier.Model_Refresh(modelNotifierArgs.model);
+            //            break;
+            //        }
+            //    default:
+            //        {
+            //            throw new Exception();
+            //            //break;
+            //        }
+            //}
         }
 
         #endregion

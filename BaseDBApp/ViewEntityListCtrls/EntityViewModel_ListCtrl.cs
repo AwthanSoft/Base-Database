@@ -8,12 +8,13 @@ using System.ComponentModel;
 using Mawa.DBCore.ViewEntityCore;
 using Mawa.Lock;
 using Mawa.BaseApp;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore.ViewEntityListCtrls
 {
     
     public abstract class EntityViewModel_ListCtrl<TViewEntity, TViewEntityModelView> : IDisposable, INotifyPropertyChanged
-        where TViewEntity : ViewEntityCore.ModelViewEntityCore
+        where TViewEntity : ModelViewEntityCore
         where TViewEntityModelView : ViewEntityViewModel<TViewEntity>
     {
 

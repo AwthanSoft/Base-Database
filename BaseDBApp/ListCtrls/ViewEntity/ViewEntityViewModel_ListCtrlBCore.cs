@@ -8,22 +8,23 @@ using System.ComponentModel;
 using Mawa.DBCore.ViewEntityCore;
 using System.Threading.Tasks;
 using Mawa.Lock;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 namespace Mawa.DBCore.ListCtrls.ViewEntity
 {
     public delegate TViewEntityModelView[] OnTViewEntityModelView_Arr_Delegate<TViewEntity ,TViewEntityModelView>()
-        where TViewEntity : ViewEntityCore.ModelViewEntityCore
+        where TViewEntity : ModelViewEntityCore
         where TViewEntityModelView : ViewEntityViewModel<TViewEntity>;
     
     public delegate TViewEntityModelView[] OnViewEntityModelView_SearchArr_Delegate<TViewEntity, TViewEntityModelView>(string searchStr)
-        where TViewEntity : ViewEntityCore.ModelViewEntityCore
+        where TViewEntity : ModelViewEntityCore
         where TViewEntityModelView : ViewEntityViewModel<TViewEntity>;
      
     //public delegate TViewEntity[] OnViewEntity_SearchArr_Delegate<TViewEntity>(string searchStr)
     //where TViewEntity : ViewEntity;
 
     public abstract class ViewEntityViewModel_ListCtrlBCore<TViewEntity, TViewEntityModelView> : IDisposable, INotifyPropertyChanged
-        where TViewEntity : ViewEntityCore.ModelViewEntityCore
+        where TViewEntity : ModelViewEntityCore
         where TViewEntityModelView : ViewEntityViewModel<TViewEntity>
     {
 

@@ -1,13 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Linq;
+using Mawa.BaseDBCore.ViewEntityCore;
 
 //using System.Data.Entity.Migrations;
-using Mawa.DBCore.NotifierCore.ViewEntity;
 
 namespace Mawa.DBCore.ViewEntityCore
 {
@@ -15,16 +9,17 @@ namespace Mawa.DBCore.ViewEntityCore
     {
         void Refresh_Listeners();
     }
-    public abstract class ViewEntityDBManagerCore<T> : ModelDBController<T> , IViewEntityDBManagerCore
-        where T: ModelViewEntityCore 
+    public abstract class ViewEntityDBManagerCore<T, TId> : ModelDBController<T, TId> , IViewEntityDBManagerCore
+        where T: class, IModelViewEntityCore
+        where TId : struct
     {
         #region Singleton
-
 
         public ViewEntityDBManagerCore(DBManagersControlCore dBManagerCore) : base(dBManagerCore)
         {
             pre_refresh();
         }
+        
         private void pre_refresh()
         {
         }
@@ -37,49 +32,28 @@ namespace Mawa.DBCore.ViewEntityCore
             OnRefresh_Listeners();
         }
         protected abstract void OnRefresh_Listeners();
-        protected void Notify_View_Add(T model)
-        {
-            dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T>(model);
-        }
-        protected void Notify_View_Update(T model)
-        {
-            dBManagerCore.modelNotifierControlsManager.UpdateNotiFy<T>(model);
-        }
-        protected void Notify_View_Delete(T model)
-        {
-            throw new Exception();
-        }
-        protected void Notify_View_Refresh()
-        {
-            dBManagerCore.modelNotifierControlsManager.RefreshNotiFy<T>();
-        }
+
+
+        //protected void Notify_View_Add(T model)
+        //{
+        //    dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T, TId>(model);
+        //}
+        //protected void Notify_View_Update(T model)
+        //{
+        //    dBManagerCore.modelNotifierControlsManager.UpdateNotiFy<T>(model);
+        //}
+        //protected void Notify_View_Delete(T model)
+        //{
+        //    throw new Exception();
+        //}
+        //protected void Notify_View_Refresh()
+        //{
+        //    dBManagerCore.modelNotifierControlsManager.RefreshNotiFy<T>();
+        //}
 
         #endregion
 
 
-        #region For Methods get
-
-        public T Get_Model_By_ObjectId(string ObjectId)
-        {
-            open_lock();
-            var resultt = _Get_Model_By_ObjectId(ObjectId);
-            close_lock();
-            return resultt;
-        }
-        private T _Get_Model_By_ObjectId(string ObjectId)
-        {
-            //var temp_model = db_ModelEntity.Find(ObjectId);
-            //var temp_model = db_ModelEntity.Select(m => m.ObjectId.Equals(ObjectId)).Distinct();
-            var temp_model = db_Model.Where(m => m.ObjectId.Equals(ObjectId)).FirstOrDefault();
-            return temp_model;
-        }
-        #endregion
-
-        #region For Searching Methods 
-
-
-
-        #endregion
 
     }
 

@@ -1,34 +1,39 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Mawa.DBCore.NotifierCore;
+using Mawa.BaseDBCore;
+using Mawa.Lock;
+using Mawa.BaseDBCore.EntityCore;
 
 //using System.Data.Entity.Migrations;
 
 namespace Mawa.DBCore
 {
-    public class ModelDBController<T> 
-        where T: DBModelCore
+    public interface IModelDBController<T>
+        where T : class, IDBModelCore
+    {
+        void open_lock_Ex();
+        void close_lock_Ex();
+        DbSet<T> db_Model_Ex { get; }
+    }
+
+    public class ModelDBController<T, TId> : IModelDBController<T>
+        where T: class ,IDBModelCore
+        where TId : struct
     {
         #region For Internal Extension
         internal DbSet<T> db_Model_Ex => db_Model;
-        internal void open_lock_Ex()
-        {
-            open_lock();
-        }
-        internal void close_lock_Ex()
-        {
-            close_lock();
-        }
+       
 
         #endregion
 
         #region Singleton
 
+        protected ObjectLock dbLocker => dBManagerCore.dbLocker;
 
         protected readonly DBManagersControlCore dBManagerCore;
         protected DbContextCore dbContextCore => dBManagerCore.dbContextCore;
@@ -38,12 +43,12 @@ namespace Mawa.DBCore
         public ModelDBController(DBManagersControlCore dBManager)
         {
             this.dBManagerCore = dBManager;
-            modelEventNotifier = new ModelEventNotifier<T>();
+            modelEventNotifier = new ModelEventNotifier<T, TId>();
             pre_refresh();
         }
         private void pre_refresh()
         {
-            dBManagerCore.modelNotifierControlsManager.AddNotifier<T>(modelEventNotifier);
+            dBManagerCore.modelNotifierControlsManager.AddNotifier<T, TId>(modelEventNotifier);
         }
 
         #endregion
@@ -197,7 +202,7 @@ namespace Mawa.DBCore
         #region Methods Add
 
         public EntityEntry<T> Add_Model<TEntity>(TEntity new_model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             open_lock();
             EntityEntry<T> temp_resultt = _Add_Model(new_model);
@@ -205,19 +210,19 @@ namespace Mawa.DBCore
             return temp_resultt;
         }
         public EntityEntry<T> Add_Model_trans<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             return _Add_Model(model);
         }
         protected EntityEntry<T> _Add_Model<TEntity>(TEntity new_model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             var temp_resultt = db_Model.Add(new_model as T);
 
             if (temp_resultt.State == EntityState.Added)
             {
                 db.SaveChanges();
-                dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T>(temp_resultt.Entity);
+                _ModelNotify(DBModelNotifierType.Insert, temp_resultt.Entity);
             }
             else
             {
@@ -241,7 +246,7 @@ namespace Mawa.DBCore
             if (temp_resultt.State == EntityState.Added)
             {
                 db.SaveChanges();
-                dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T>(temp_resultt.Entity);
+                _ModelNotify(DBModelNotifierType.Insert, temp_resultt.Entity);
             }
             return temp_resultt;
         }
@@ -263,13 +268,14 @@ namespace Mawa.DBCore
             return _AddRange_Model(new_models);
         }
         protected T[] _AddRange_Model(T[] new_models)
+             // where TEntity : EntityCore.ModelEntityCore
         {
 
             db_Model.AddRange(new_models);
             int resultt_num = db.SaveChanges();
             if (resultt_num > 0)
             {
-                dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T>(new_models);
+                _ModelNotify(DBModelNotifierType.Insert, new_models);
                 return new_models;
             }
             else
@@ -299,7 +305,7 @@ namespace Mawa.DBCore
                 case EntityState.Added:
                     {
                         db.SaveChanges();
-                        dBManagerCore.modelNotifierControlsManager.InsertNotiFy<T>(temp_resultt.Entity);
+                        _ModelNotify(DBModelNotifierType.Insert, temp_resultt.Entity);
                         break;
                     }
                 case EntityState.Modified:
@@ -312,8 +318,7 @@ namespace Mawa.DBCore
                         {
                             throw ex;
                         }
-
-                        dBManagerCore.modelNotifierControlsManager.UpdateNotiFy<T>(temp_resultt.Entity);
+                        _ModelNotify(DBModelNotifierType.Update, temp_resultt.Entity);
                         break;
                     }
                 default:
@@ -336,7 +341,7 @@ namespace Mawa.DBCore
         
         //Update
         public EntityEntry<T> Update_Model<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             open_lock();
             EntityEntry<T> temp_resultt = _Update_Model(model);
@@ -344,19 +349,19 @@ namespace Mawa.DBCore
             return temp_resultt;
         }
         public EntityEntry<T> Update_Model_trans<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             return _Update_Model(model);
         }
         protected EntityEntry<T> _Update_Model<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             var temp_resultt = db_Model.Update(model as T);
 
             if (temp_resultt.State == EntityState.Modified)
             {
                 db.SaveChanges();
-                dBManagerCore.modelNotifierControlsManager.UpdateNotiFy<T>(temp_resultt.Entity);
+                _ModelNotify(DBModelNotifierType.Update, temp_resultt.Entity);
             }
             else
             {
@@ -368,7 +373,7 @@ namespace Mawa.DBCore
 
         //UpdateRange
         public EntityEntry<T>[] UpdateRange<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             open_lock();
             var temp_resultt = _UpdateRange(models);
@@ -376,12 +381,12 @@ namespace Mawa.DBCore
             return temp_resultt;
         }
         public EntityEntry<T>[] UpdateRange_trans<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             return _UpdateRange(models);
         }
         protected EntityEntry<T>[] _UpdateRange<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             var temp_List = new List<EntityEntry<T>>();
             foreach(var model in models)
@@ -396,7 +401,7 @@ namespace Mawa.DBCore
             {
                 foreach (var entry in temp_List)
                 {
-                    dBManagerCore.modelNotifierControlsManager.UpdateNotiFy<T>(entry.Entity);
+                    _ModelNotify(DBModelNotifierType.Update, entry.Entity);
                 }
                 return temp_List.ToArray();
             }
@@ -413,7 +418,7 @@ namespace Mawa.DBCore
 
         //Remove
         public EntityEntry<T> Remove_Model<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             open_lock();
             EntityEntry<T> temp_resultt = _Remove_Model(model);
@@ -421,19 +426,19 @@ namespace Mawa.DBCore
             return temp_resultt;
         }
         public EntityEntry<T> Remove_Model_trans<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+           where TEntity : ModelEntityCore
         {
             return _Remove_Model(model);
         }
         protected EntityEntry<T> _Remove_Model<TEntity>(TEntity model)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             var temp_resultt = db_Model.Remove(model as T);
 
             if (temp_resultt.State == EntityState.Deleted)
             {
                 db.SaveChanges();
-                dBManagerCore.modelNotifierControlsManager.DeleteNotiFy<T>(temp_resultt.Entity);
+                _ModelNotify(DBModelNotifierType.Delete, temp_resultt.Entity);
             }
             else
             {
@@ -445,7 +450,7 @@ namespace Mawa.DBCore
 
         //RemoveRange
         public EntityEntry<T>[] RemoveRange<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             open_lock();
             var temp_resultt = _RemoveRange(models);
@@ -453,12 +458,12 @@ namespace Mawa.DBCore
             return temp_resultt;
         }
         public EntityEntry<T>[] RemoveRange_trans<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             return _RemoveRange(models);
         }
         protected EntityEntry<T>[] _RemoveRange<TEntity>(TEntity[] models)
-            where TEntity : EntityCore.ModelEntityCore
+            where TEntity : ModelEntityCore
         {
             var temp_List = new List<EntityEntry<T>>();
             foreach (var model in models)
@@ -471,8 +476,7 @@ namespace Mawa.DBCore
             int save_resultt = db.SaveChanges();
             if (save_resultt > 0)
             {
-                dBManagerCore.modelNotifierControlsManager.DeleteNotiFy<T>(
-                    temp_List.Select<EntityEntry<T>,T>(b=>b.Entity).ToArray());
+                this._ModelNotify(DBModelNotifierType.Delete, temp_List.Select(b => b.Entity).ToArray());
                 return temp_List.ToArray();
             }
             else
@@ -491,13 +495,6 @@ namespace Mawa.DBCore
         }
 
         #endregion
-
-
-
-
-
-
-
 
 
         #region For Load Model
@@ -529,11 +526,100 @@ namespace Mawa.DBCore
 
         #endregion
 
-        #region For Events
+        #region For Notify Events
 
-        public readonly ModelEventNotifier<T> modelEventNotifier;
+        public readonly ModelEventNotifier<T, TId> modelEventNotifier;
+
+        public void ModelNotify(DBModelNotifierType notifierType, T model)
+        {
+            //lock (dbLocker.opening_Lock)
+            {
+                _ModelNotify(notifierType, model);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, T model)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, model);
+        }
+
+        public void ModelNotify(DBModelNotifierType notifierType, TId modelId)
+        {
+            //lock (dbLocker.opening_Lock)
+            {
+                _ModelNotify(notifierType, modelId);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, TId modelId)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, modelId);
+        }
+
+        public void ModelNotify(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        {
+            //lock(dbLocker.opening_Lock) // because it loacked by notifier manager
+            {
+                _ModelNotify(notifierType, modelId, model);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, TId? modelId = null, T model = null)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify(notifierType, modelId, model);
+        }
+
+        public void ModelNotify(DBModelNotifierType notifierType, Dictionary<TId, T> dic)
+        {
+            //lock (dbLocker.opening_Lock)
+            {
+                _ModelNotify(notifierType, dic);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, Dictionary<TId, T> dic)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify(notifierType, dic);
+        }
+
+        public void ModelNotify(DBModelNotifierType notifierType, TId[] modelIds)
+        {
+            //lock (dbLocker.opening_Lock)
+            {
+                _ModelNotify(notifierType, modelIds);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, TId[] modelIds)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, modelIds);
+        }
+
+        public void ModelNotify(DBModelNotifierType notifierType, T[] models)
+        {
+            //lock (dbLocker.opening_Lock)
+            {
+                _ModelNotify(notifierType, models);
+            }
+        }
+        protected void _ModelNotify(DBModelNotifierType notifierType, T[] models)
+        {
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models);
+        }
 
         #endregion
+
+        #region IModelDBController
+
+        DbSet<T> IModelDBController<T>.db_Model_Ex => db_Model;
+
+        void IModelDBController<T>.open_lock_Ex()
+        {
+            this.open_lock();
+        }
+
+        void IModelDBController<T>.close_lock_Ex()
+        {
+            this.close_lock();
+        }
+        #endregion
+
+
     }
 
 

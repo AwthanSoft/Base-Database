@@ -10,6 +10,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Mawa.BaseDBCore.EntityCore;
+using Mawa.BaseDBCore;
 
 namespace Mawa.DBCore
 {
@@ -53,7 +55,7 @@ namespace Mawa.DBCore
 
         public static void AddOrUpdate<T>(this DbSet<T> dbSet, Expression<Func<T, object>> key, T data)
         //where T : class
-        where T : DBModelCore
+        where T : class, IDBModelCore
         {
             var context = dbSet.GetContext();
             var ids = context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name);
@@ -98,7 +100,7 @@ namespace Mawa.DBCore
         // me
 
         public static EntityEntry<T> AddOrUpdate<T>(this DbSet<T> dbSet, T data)
-            where T : DBModelCore
+            where T : class, IDBModelCore
         {
             var context = dbSet.GetContext();
             var ids = context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name);
@@ -140,7 +142,7 @@ namespace Mawa.DBCore
 
         //Me
         public static EntityEntry<T> AddOrGet<T>(this DbSet<T> dbSet, T data)
-            where T : DBModelCore
+            where T : class, IDBModelCore
         {
             var context = dbSet.GetContext();
             var ids = context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(x => x.Name);
