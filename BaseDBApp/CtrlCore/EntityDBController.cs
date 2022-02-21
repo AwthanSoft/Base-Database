@@ -7,7 +7,6 @@ namespace Mawa.DBCore.CtrlCore
 {
     public sealed class EntityDBController<T, TId> : ModelDBController<T, TId>
         where T: ModelEntityCore
-        where TId : struct
     {
         #region Singleton
 

@@ -419,17 +419,21 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
 
         public void Search(string searchStr)
         {
-            Task.Run(() =>
+            if (lockForLast.isContinue())
             {
-                if (lockForLast.isContinue())
-                {
-                    open_Lock();
-                    Open_Load();
-                    _Search(searchStr);
-                    Close_Load();
-                    close_Lock();
-                    lockForLast.close_lock();
-                }
+                open_Lock();
+                Open_Load();
+                _Search(searchStr);
+                Close_Load();
+                close_Lock();
+                lockForLast.close_lock();
+            }
+        }
+        public async Task SearchAsync(string searchStr)
+        {
+            await Task.Run(() =>
+            {
+                Search(searchStr);
             });
         }
         private void _Search(string searchStr)
@@ -504,6 +508,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
             ModelViewsCounter = RowsCounter;
             close_Lock();
         }
+
         #endregion
 
 

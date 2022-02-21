@@ -8,6 +8,7 @@ using Mawa.DBCore.NotifierCore;
 using Mawa.BaseDBCore;
 using Mawa.Lock;
 using Mawa.BaseDBCore.EntityCore;
+using System.Linq.Expressions;
 
 //using System.Data.Entity.Migrations;
 
@@ -157,6 +158,23 @@ namespace Mawa.DBCore
             return temp_model;
         }
 
+
+        //QWhere
+        public T[] Get_Models_QWhere(Expression<Func<T, bool>> predicate)
+        {
+            open_lock();
+            var temp_model = _Get_Models_QWhere(predicate);
+            close_lock();
+            return temp_model;
+        }
+        private T[] _Get_Models_QWhere(Expression<Func<T, bool>> predicate)
+        {
+            var temp_model = from dd in db_Model
+                             select dd;
+            var wq = temp_model.Where(predicate);
+            return wq.ToArray();
+        }
+
         #endregion
 
 
@@ -198,6 +216,252 @@ namespace Mawa.DBCore
         //}
 
         #endregion
+
+
+
+
+        #region yield
+
+        public IEnumerable<T> Get_IEnumerable()
+        {
+            open_lock();
+            var temp_model = _Get_IEnumerable();
+            close_lock();
+            return temp_model;
+        }
+        private IEnumerable<T> _Get_IEnumerable()
+        {
+            foreach (var item in db_Model)
+            {
+                yield return item;
+            }
+        }
+
+        #endregion
+
+
+        #region Custom Action
+
+        public TResult Get_DbSet_predicate<TResult>(Func<DbSet<T>, TResult> predicate)
+        {
+            open_lock();
+            var temp_model = _Get_DbSet_predicate(predicate);
+            close_lock();
+            return temp_model;
+        }
+        private TResult _Get_DbSet_predicate<TResult>(Func<DbSet<T>, TResult> predicate)
+        {
+            return predicate(db_Model);
+        }
+
+        #endregion
+
+        #region Count
+        public int get_Count_All()
+        {
+            open_lock();
+            var tempList = _get_Count_All();
+            close_lock();
+            return tempList;
+        }
+        protected int _get_Count_All()
+        {
+            return db_Model.Count();
+        }
+        protected int _get_Count_All_trans()
+        {
+            return _get_Count_All();
+        }
+
+
+
+
+
+
+
+        #endregion
+
+
+
+        #region Struct Q
+
+        //Select-Min
+        public TResult Q_Select_Min<TResult>(Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_Select_Min(selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult Q_Select_Min_trans<TResult>(Func<T, TResult> selector)
+        {
+            return _Q_Select_Min(selector);
+        }
+        private TResult _Q_Select_Min<TResult>(Func<T, TResult> selector)
+        {
+            return db_Model
+                .Select(selector)
+                .Min();
+        }
+
+
+        //Select-Max
+        public TResult Q_Select_Max<TResult>(Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_Select_Max(selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult Q_Select_Max_trans<TResult>(Func<T, TResult> selector)
+        {
+            return _Q_Select_Max(selector);
+        }
+        private TResult _Q_Select_Max<TResult>(Func<T, TResult> selector)
+        {
+            return db_Model
+                .Select(selector)
+                .Max();
+        }
+
+
+        //QWhere-Select-Min
+        public TResult Q_QWhere_Select_Min<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_QWhere_Select_Min(predicate, selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult Q_QWhere_Select_Min_trans<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return _Q_QWhere_Select_Min(predicate, selector);
+        }
+        private TResult _Q_QWhere_Select_Min<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return db_Model
+                .Where(predicate)
+                .Select(selector)
+                .Min();
+        }
+
+
+        //QWhere-Select-Max
+        public TResult Q_QWhere_Select_Max<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_QWhere_Select_Max(predicate, selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult Q_QWhere_Select_Max_trans<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return _Q_QWhere_Select_Max(predicate, selector);
+        }
+        private TResult _Q_QWhere_Select_Max<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return db_Model
+                .Where(predicate)
+                .Select(selector)
+                .Max();
+        }
+
+
+
+        //QWhere-Count
+        public int Q_QWhere_Count(Expression<Func<T, bool>> predicate)
+        {
+            open_lock();
+            var temp_model = _Q_QWhere_Count(predicate);
+            close_lock();
+            return temp_model;
+        }
+        public int Q_QWhere_Count_trans(Expression<Func<T, bool>> predicate)
+        {
+            return _Q_QWhere_Count(predicate);
+        }
+        private int _Q_QWhere_Count(Expression<Func<T, bool>> predicate)
+        {
+            return db_Model
+                .Where(predicate)
+                .Count();
+        }
+
+
+
+        //QWhere-Select-ToArray
+        public TResult[] Q_QWhere_Select_ToArray<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_QWhere_Select_ToArray(predicate, selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult[] Q_QWhere_Select_ToArray_trans<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return _Q_QWhere_Select_ToArray(predicate, selector);
+        }
+        private TResult[] _Q_QWhere_Select_ToArray<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return db_Model
+                .Where(predicate)
+                .Select(selector)
+                .ToArray();
+        }
+
+
+
+        //QWhere-Select-Distinct-ToArray
+        public TResult[] Q_QWhere_Select_Distinct_ToArray<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            open_lock();
+            var temp_model = _Q_QWhere_Select_Distinct_ToArray(predicate, selector);
+            close_lock();
+            return temp_model;
+        }
+        public TResult[] Q_QWhere_Select_Distinct_ToArray_trans<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return _Q_QWhere_Select_Distinct_ToArray(predicate, selector);
+        }
+        private TResult[] _Q_QWhere_Select_Distinct_ToArray<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
+        {
+            return db_Model
+                .Where(predicate)
+                .Select(selector)
+                .Distinct()
+                .ToArray();
+        }
+
+
+
+        //QWhere-Take-ToArray
+        public T[] Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
+        {
+            open_lock();
+            var temp_model = _Q_Where_Take_ToArray(predicate, takeCount);
+            close_lock();
+            return temp_model;
+        }
+        public T[] Q_Where_Take_ToArray_trans(Func<T, bool> predicate, int takeCount)
+        {
+            return _Q_Where_Take_ToArray(predicate, takeCount);
+        }
+        private T[] _Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
+        {
+            return db_Model
+                .Where(predicate)
+                .Take(takeCount)
+                .ToArray();
+        }
+
+
+
+
+        #endregion
+
+
+
+
 
 
 
