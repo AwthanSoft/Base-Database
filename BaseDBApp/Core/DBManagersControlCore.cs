@@ -25,7 +25,7 @@ namespace Mawa.DBCore
         internal DbContext db => dB_oper.db;
         internal DbContextCore dbContextCore => dB_oper.dbContextCore;
 
-        internal ObjectLock dbLocker => dB_oper.dbLocker;
+        public ObjectLock dbLocker => dB_oper.dbLocker;
 
         public DBManagersControlCore(DB_OperCore dB_oper)
         {
