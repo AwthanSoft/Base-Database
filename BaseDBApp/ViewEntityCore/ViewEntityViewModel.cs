@@ -21,7 +21,7 @@ namespace Mawa.DBCore.ViewEntityCore
             }
         }
 
-        public string ObjectId => viewEntity.ObjectId;
+        public string ObjectId => viewEntity.ModelObjectId;
 
         public ViewEntityViewModel(TViewEntity viewEntity)
         {

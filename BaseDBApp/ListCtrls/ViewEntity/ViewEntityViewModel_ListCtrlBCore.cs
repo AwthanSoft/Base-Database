@@ -222,7 +222,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         //adding
         protected void _Add_ModelView(TViewEntity viewEntity)
         {
-            if (_isExist_ModelView(viewEntity.ObjectId))
+            if (_isExist_ModelView(viewEntity.ModelObjectId))
             {
                 // for update with new Model
                 _Update_Model(viewEntity);
@@ -246,7 +246,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
 
         protected void _Remove_ViewEntity(TViewEntity viewEntity)
         {
-            if (!_isExist_ModelView(viewEntity.ObjectId))
+            if (!_isExist_ModelView(viewEntity.ModelObjectId))
             {
                 throw new Exception();
                 // for update with new Model
@@ -254,7 +254,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
             }
             else
             {
-                _Remove_To_Dic(viewEntity.ObjectId);
+                _Remove_To_Dic(viewEntity.ModelObjectId);
             }
         }
         protected void _Remove_ModelView(string modelView_ObjectId)
@@ -312,9 +312,9 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         }
         protected void _Update_Model(TViewEntity model)
         {
-            if (_isExist_ModelView(model.ObjectId))
+            if (_isExist_ModelView(model.ModelObjectId))
             {
-                TViewEntityModelView modelView = modelViews_dic[model.ObjectId];
+                TViewEntityModelView modelView = modelViews_dic[model.ModelObjectId];
                 modelView.viewEntity = model;
                 _Update_To_Dic(modelView);
             }

@@ -79,9 +79,9 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         {
             foreach (var mv in viewEntitys)
             {
-                if (!_isExist_ViewEntity(mv.ObjectId))
+                if (!_isExist_ViewEntity(mv.ModelObjectId))
                 {
-                    viewEntity_dic.Add(mv.ObjectId, mv);
+                    viewEntity_dic.Add(mv.ModelObjectId, mv);
                 }
                 else
                 {
@@ -92,9 +92,9 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         }
         void _Add_To_Dic(TViewEntity viewEntity)
         {
-            if (viewEntity_dic.ContainsKey(viewEntity.ObjectId))
+            if (viewEntity_dic.ContainsKey(viewEntity.ModelObjectId))
             {
-                viewEntity_dic.Add(viewEntity.ObjectId, viewEntity);
+                viewEntity_dic.Add(viewEntity.ModelObjectId, viewEntity);
                 OnModelsChanged();
             }
             else
@@ -116,7 +116,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         }
         void _Update_To_Dic(TViewEntity viewEntity)
         {
-            viewEntity_dic[viewEntity.ObjectId] = viewEntity;
+            viewEntity_dic[viewEntity.ModelObjectId] = viewEntity;
             OnModelsChanged();
         }
 
@@ -197,7 +197,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
         //adding
         protected void _Add_ViewEntity(TViewEntity viewEntity)
         {
-            if (_isExist_ViewEntity(viewEntity.ObjectId))
+            if (_isExist_ViewEntity(viewEntity.ModelObjectId))
             {
                 // for update with new Model
                 _Update_ViewEntity(viewEntity);
@@ -220,7 +220,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
 
         protected void _Remove_ViewEntity(TViewEntity viewEntity)
         {
-            if (!_isExist_ViewEntity(viewEntity.ObjectId))
+            if (!_isExist_ViewEntity(viewEntity.ModelObjectId))
             {
                 throw new Exception();
                 // for update with new Model
@@ -228,7 +228,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
             }
             else
             {
-                _Remove_To_Dic(viewEntity.ObjectId);
+                _Remove_To_Dic(viewEntity.ModelObjectId);
             }
         }
         protected void _Remove_ViewEntity(string viewEntity_ObjectId)
@@ -264,7 +264,7 @@ namespace Mawa.DBCore.ListCtrls.ViewEntity
 
         protected void _Update_ViewEntity(TViewEntity viewEntity)
         {
-            if (_isExist_ViewEntity(viewEntity.ObjectId))
+            if (_isExist_ViewEntity(viewEntity.ModelObjectId))
             {
                 _Update_To_Dic(viewEntity);
             }

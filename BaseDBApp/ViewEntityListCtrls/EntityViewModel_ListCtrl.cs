@@ -136,7 +136,7 @@ namespace Mawa.DBCore.ViewEntityListCtrls
         //adding
         private void _Add_ModelView(TViewEntity model)
         {
-            if (_isExist_ModelView(model.ObjectId))
+            if (_isExist_ModelView(model.ModelObjectId))
             {
                 // for update with new Model
                 _Update_ModelView(model);
@@ -170,7 +170,7 @@ namespace Mawa.DBCore.ViewEntityListCtrls
         // remove
         private void _Remove_ModelView(TViewEntity model)
         {
-            if (!_isExist_ModelView(model.ObjectId))
+            if (!_isExist_ModelView(model.ModelObjectId))
             {
                 throw new Exception();
                 // for update with new Model
@@ -178,8 +178,8 @@ namespace Mawa.DBCore.ViewEntityListCtrls
             }
             else
             {
-                TViewEntityModelView modelView = modelViews_dic[model.ObjectId];
-                _Remove_To_Observable(model.ObjectId , modelView);
+                TViewEntityModelView modelView = modelViews_dic[model.ModelObjectId];
+                _Remove_To_Observable(model.ModelObjectId, modelView);
                 OnRemoveModelView(modelView);
             }
         }
@@ -225,7 +225,7 @@ namespace Mawa.DBCore.ViewEntityListCtrls
         }
         private void _Update_ModelView(TViewEntity model)
         {
-            if (!modelViews_dic.Keys.Contains(model.ObjectId))
+            if (!modelViews_dic.Keys.Contains(model.ModelObjectId))
             {
                 //pass
                 // may it is not in db
@@ -234,9 +234,9 @@ namespace Mawa.DBCore.ViewEntityListCtrls
             }
             else
             {
-                modelViews_dic[model.ObjectId].viewEntity = model;
+                modelViews_dic[model.ModelObjectId].viewEntity = model;
                 //models_dic[model.ObjectId].Refresh_ObjModel();
-                OnUpdateModelView(modelViews_dic[model.ObjectId]);
+                OnUpdateModelView(modelViews_dic[model.ModelObjectId]);
             }
         }
         public void Update_ModelView(TViewEntity model)

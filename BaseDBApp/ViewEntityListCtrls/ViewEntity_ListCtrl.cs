@@ -133,14 +133,14 @@ namespace Mawa.DBCore.ViewEntityListCtrls
         //adding
         private void _Add_ViewEntity(TViewEntity viewEntity)
         {
-            if (_isExist_ViewEntity(viewEntity.ObjectId))
+            if (_isExist_ViewEntity(viewEntity.ModelObjectId))
             {
                 // for update with new Model
                 _Update_ViewEntity(viewEntity);
             }
             else
             {
-                _Add_To_Observable(viewEntity.ObjectId, viewEntity);
+                _Add_To_Observable(viewEntity.ModelObjectId, viewEntity);
                 OnAddViewEntity(viewEntity);
             }
         }
@@ -167,7 +167,7 @@ namespace Mawa.DBCore.ViewEntityListCtrls
         // remove
         private void _Remove_ViewEntity(TViewEntity viewEntity)
         {
-            if (!_isExist_ViewEntity(viewEntity.ObjectId))
+            if (!_isExist_ViewEntity(viewEntity.ModelObjectId))
             {
                 //as temp
                 throw new Exception();
@@ -176,7 +176,7 @@ namespace Mawa.DBCore.ViewEntityListCtrls
             }
             else
             {
-                _Remove_To_Observable(viewEntity.ObjectId, viewEntity);
+                _Remove_To_Observable(viewEntity.ModelObjectId, viewEntity);
                 OnRemoveViewEntity(viewEntity);
             }
         }

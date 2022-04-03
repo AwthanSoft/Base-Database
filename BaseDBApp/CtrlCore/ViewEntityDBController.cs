@@ -35,7 +35,7 @@ namespace Mawa.DBCore.CtrlCore
         {
             //var temp_model = db_ModelEntity.Find(ObjectId);
             //var temp_model = db_ModelEntity.Select(m => m.ObjectId.Equals(ObjectId)).Distinct();
-            var temp_model = db_Model.Where(m => m.ObjectId.Equals(ObjectId)).FirstOrDefault();
+            var temp_model = db_Model.Where(m => m.ModelObjectId.Equals(ObjectId)).FirstOrDefault();
             return temp_model;
         }
 
