@@ -46,9 +46,13 @@ namespace Mawa.DBCore
 
         //abstract protected DbContextCore getDbContextCore();
         abstract protected DbContextCore getNewDbContextCore();
-        //internal DbContextCore GetNewDbContextCore() => getNewDbContextCore();
+        abstract protected DbContext getNewDbContext();
+
+        internal DbContext GetNew_dbContext() => getNewDbContext();
 
         #endregion
+
+        
 
     }
 }

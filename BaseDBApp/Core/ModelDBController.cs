@@ -9,6 +9,8 @@ using Mawa.BaseDBCore;
 using Mawa.Lock;
 using Mawa.BaseDBCore.EntityCore;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 //using System.Data.Entity.Migrations;
 
@@ -139,6 +141,12 @@ namespace Mawa.DBCore
             var temp_model = db_Model.Where<T>(predicate).FirstOrDefault();
             return temp_model;
         }
+
+
+
+
+
+
 
 
         public virtual T[] Get_Models_Where(Func<T, bool> predicate)
@@ -457,8 +465,53 @@ namespace Mawa.DBCore
 
 
 
+
         #endregion
 
+
+        #region Advance Struct Q
+
+        //QWhere-First
+        public T Q_QWhere_First(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return dbContext.Set<T>().Where(predicate).First();
+                }
+            }
+        }
+        public async Task<T> Q_QWhere_FirstAsync(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            if(OpeningLock)
+            {
+                open_lock();
+                var resultt = await db_Model.Where(predicate).FirstAsync();
+                close_lock();
+                return resultt;
+            }
+            else
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return await dbContext.Set<T>().Where(predicate).FirstAsync();
+                }
+            }
+        }
+        public T Q_QWhere_First_trans(Expression<Func<T, bool>> predicate)
+        {
+            return db_Model.Where(predicate).First();
+        }
+        public async Task<T> Q_QWhere_First_transAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await db_Model.Where(predicate).FirstAsync();
+        }
+
+
+
+
+        #endregion
 
 
 

@@ -22,6 +22,9 @@ namespace Mawa.DBCore
         readonly DB_OperCore _dB_oper;
         protected DB_OperCore dB_oper => _dB_oper;
 
+        internal DbContext GetNew_dbContext() => dB_oper.GetNew_dbContext();
+
+
         internal DbContext db => dB_oper.db;
         internal DbContextCore dbContextCore => dB_oper.dbContextCore;
 
