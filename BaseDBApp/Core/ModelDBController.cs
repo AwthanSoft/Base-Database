@@ -10,7 +10,6 @@ using Mawa.Lock;
 using Mawa.BaseDBCore.EntityCore;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 
 //using System.Data.Entity.Migrations;
 
@@ -29,7 +28,7 @@ namespace Mawa.DBCore
 
     {
         #region For Internal Extension
-        internal DbSet<T> db_Model_Ex => db_Model;
+        //internal DbSet<T> db_Model_Ex => db_Model;
        
 
         #endregion
@@ -39,9 +38,8 @@ namespace Mawa.DBCore
         protected ObjectLock dbLocker => dBManagerCore.dbLocker;
 
         protected readonly DBManagersControlCore dBManagerCore;
-        protected DbContextCore dbContextCore => dBManagerCore.dbContextCore;
         protected DbContext db { get { return dBManagerCore.db; } }
-        protected virtual DbSet<T> db_Model { get { return dbContextCore.db_Model(typeof(T)) as DbSet<T>; } }
+        protected virtual DbSet<T> db_Model => db.Set<T>();
 
         protected readonly TId defualtNull;
 
@@ -90,11 +88,6 @@ namespace Mawa.DBCore
         protected T[] _get_Models_All()
         {
             return db_Model.ToArray();
-            //var obj_list = from c in db_Model
-            //               select c;
-
-            //var tempList = obj_list.ToList();
-            //return obj_list.ToArray();
         }
         public T[] get_Models_All_trans()
         {

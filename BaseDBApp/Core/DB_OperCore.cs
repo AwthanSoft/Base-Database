@@ -15,9 +15,8 @@ namespace Mawa.DBCore
     {
         #region Singleton
 
-        private DbContextCore _dbContextCore;
-        internal DbContextCore dbContextCore => _dbContextCore;
-        public DbContext db => _dbContextCore.db;
+        internal DbContext _db;
+        public DbContext db => _db;
 
         #endregion
 
@@ -30,13 +29,13 @@ namespace Mawa.DBCore
         public void open_Lock()
         {
             objectLock.open_lock();
-            _dbContextCore = getNewDbContextCore();
+            _db = getNewDbContext();
         }
 
         public void close_Lock()
         {
-            _dbContextCore.Dispose();
-            _dbContextCore = null;
+            _db.Dispose();
+            _db = null;
             objectLock.close_lock();
         }
 
@@ -44,15 +43,11 @@ namespace Mawa.DBCore
 
         #region Abstract Methods
 
-        //abstract protected DbContextCore getDbContextCore();
-        abstract protected DbContextCore getNewDbContextCore();
         abstract protected DbContext getNewDbContext();
 
         internal DbContext GetNew_dbContext() => getNewDbContext();
 
         #endregion
-
-        
 
     }
 }

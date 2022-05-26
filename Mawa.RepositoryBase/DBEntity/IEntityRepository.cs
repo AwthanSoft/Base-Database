@@ -18,21 +18,21 @@ namespace Mawa.RepositoryBase.DBEntity
     }
 
 
-    public class EntityRepository<TModel> : IEntityRepository<TModel>
-        where TModel : Mawa.BaseDBCore.EntityCore.IModelEntityCore
+    public class EntityRepository<TEntity> : IEntityRepository<TEntity>
+        where TEntity : Mawa.BaseDBCore.EntityCore.IModelEntityCore
     {
         #region Initial 
-
+        readonly IDatabaseService dbService;
         public EntityRepository(IDatabaseService dbService)
         {
-
+            this.dbService = dbService;
         }
 
 
         #endregion
 
 
-        public Task<TModel> AddAsync(TModel newModel)
+        public Task<TEntity> AddAsync(TEntity newModel)
         {
             throw new NotImplementedException();
         }
