@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AppMe.ComponentModel.Waiting;
+using Mawa.RepositoryBase.DBs.Results;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,10 +12,11 @@ namespace Mawa.RepositoryBase
     //}
 
     public interface IModelRepository<TModel>
-        where TModel : Mawa.BaseDBCore.IDBModelCore
+        where TModel : BaseDBCore.IDBModelCore
     {
-        Task<TModel> AddAsync(TModel newModel);
+        Task<AddModelOperationDBResult<TModel>> AddAsync(TModel newModel);
 
+        Task<OperationWatingResult<AddModelOperationDBResult<TModel>>> AddWating(TModel newModel);
 
     }
 

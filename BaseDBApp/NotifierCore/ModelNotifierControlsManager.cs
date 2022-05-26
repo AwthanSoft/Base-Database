@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Mawa.DBCore.NotifierCore
 {
-    class ModelNotifierControlsManager : IDisposable
+    //class ModelNotifierControlsManager : IDisposable
+    public class ModelNotifierControlsManager : IDisposable // as temp public
     {
         #region Initail
         
@@ -33,7 +34,8 @@ namespace Mawa.DBCore.NotifierCore
         {
             notifiers_Dic = new Dictionary<Type, object>();
         }
-        internal void AddNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
+        //void AddNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
+        public void AddNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier) // as temp public
             where T : class, IDBModelCore
  
         {
@@ -47,12 +49,18 @@ namespace Mawa.DBCore.NotifierCore
             }
         }
 
+
         ModelNotifierControl<T, TId> getModelNotifierCtrl<T, TId>()
             where T : class, IDBModelCore
         {
             return notifiers_Dic[typeof(T)] as ModelNotifierControl<T, TId>;
         }
 
+        //public ModelEventNotifier<T, TId> GetModelEventNotifier<T, TId>()
+        // where T : class, IDBModelCore
+        //{
+        //    return getModelNotifierCtrl<T, TId>().ModelEventNotifier;
+        //}
         #endregion
 
         #region NotifyList

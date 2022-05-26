@@ -28,7 +28,6 @@ namespace Mawa.DBCore
 
     {
         #region For Internal Extension
-        //internal DbSet<T> db_Model_Ex => db_Model;
        
 
         #endregion
@@ -40,12 +39,13 @@ namespace Mawa.DBCore
         protected readonly DBManagersControlCore dBManagerCore;
         protected DbContext db { get { return dBManagerCore.db; } }
         protected virtual DbSet<T> db_Model => db.Set<T>();
+        public DbSet<T> db_Model_Ex => db_Model;
 
-        protected readonly TId defualtNull;
+        protected readonly TId defaultNull;
 
         public ModelDBController(DBManagersControlCore dBManager, TId defualtNull)
         {
-            this.defualtNull = defualtNull;
+            this.defaultNull = defualtNull;
             this.dBManagerCore = dBManager;
             modelEventNotifier = new ModelEventNotifier<T, TId>();
             pre_refresh();
@@ -72,7 +72,6 @@ namespace Mawa.DBCore
        
 
         #endregion
-
 
 
         #region Get
@@ -217,7 +216,6 @@ namespace Mawa.DBCore
         //}
 
         #endregion
-
 
 
 
@@ -852,7 +850,7 @@ namespace Mawa.DBCore
         }
         protected void _ModelNotify(DBModelNotifierType notifierType, T model)
         {
-            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, model, defualtNull);
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, model, defaultNull);
         }
 
         public void ModelNotify(DBModelNotifierType notifierType, TId modelId)
@@ -912,14 +910,12 @@ namespace Mawa.DBCore
         }
         protected void _ModelNotify(DBModelNotifierType notifierType, T[] models)
         {
-            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models, defualtNull);
+            dBManagerCore.modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models, defaultNull);
         }
 
         #endregion
 
         #region IModelDBController
-
-        DbSet<T> IModelDBController<T>.db_Model_Ex => db_Model;
 
         void IModelDBController<T>.open_lock_Ex()
         {

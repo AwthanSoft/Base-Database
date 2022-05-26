@@ -16,6 +16,7 @@ namespace Mawa.DBCore.NotifierCore
         #region Initail
         //readonly public Type EntityType = typeof(T);
         readonly ModelEventNotifier<T, TId> modelEventNotifier;
+        internal ModelEventNotifier<T, TId> ModelEventNotifier => modelEventNotifier;
         public ModelNotifierControl(ModelEventNotifier<T, TId> modelEventNotifier)
         {
             this.modelEventNotifier = modelEventNotifier;
