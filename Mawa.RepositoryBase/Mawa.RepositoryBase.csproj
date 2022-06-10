@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\MawaAppMeProject\00\MawaAppMeSolution\AppMe.NetStandard\AppMe.NetStandard.csproj" />
+    <ProjectReference Include="..\BaseDBApp\BaseDBApp.csproj" />
     <ProjectReference Include="..\Mawa.BaseDBCore\Mawa.BaseDBCore.csproj" />
   </ItemGroup>
 

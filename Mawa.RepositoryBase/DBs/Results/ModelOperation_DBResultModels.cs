@@ -18,6 +18,7 @@ namespace Mawa.RepositoryBase.DBs.Results
         readonly DBModelOperationType _OperationType;
         public DBModelOperationType OperationType => _OperationType;
         public EntityState State { set; get; }
+        public string Message { set; get; }
 
         public ModelOperationDBResult(DBModelOperationType OperationType) : base(ResultType.ModelOperation)
         {
@@ -27,7 +28,7 @@ namespace Mawa.RepositoryBase.DBs.Results
 
 
     public class AddModelOperationDBResult<TModel> : ModelOperationDBResult
-        where TModel : Mawa.BaseDBCore.EntityCore.IModelEntityCore
+        where TModel : Mawa.BaseDBCore.IDBModelCore
     {
         readonly TModel _Entity;
         public TModel Entity => _Entity;
@@ -38,5 +39,16 @@ namespace Mawa.RepositoryBase.DBs.Results
         }
     }
 
+    public class DeleteModelOperationDBResult<TModel> : ModelOperationDBResult
+      where TModel : Mawa.BaseDBCore.IDBModelCore
+    {
+        readonly TModel _Entity;
+        public TModel Entity => _Entity;
+        public TModel ResultEntity { set; get; }
+        public DeleteModelOperationDBResult(TModel Entity) : base(DBModelOperationType.Delete)
+        {
+            this._Entity = Entity;
+        }
+    }
 
 }

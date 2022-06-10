@@ -1,5 +1,5 @@
 ﻿using AppMe.ComponentModel.Waiting;
-using Mawa.BaseDBCore.EntityCore;
+using Mawa.BaseDBCore;
 using Mawa.DBCore.NotifierCore;
 using Mawa.RepositoryBase.DBs.Results;
 using System;
@@ -11,14 +11,24 @@ namespace Mawa.RepositoryBase.DBs
 {
     public interface IDatabaseService
     {
-        Task<AddModelOperationDBResult<TEntity>> AddAsync<TEntity>(TEntity newModel)
-            where TEntity : class, IModelEntityCore;
+        #region Add
 
-        OperationWatingResult<AddModelOperationDBResult<TEntity>> AddWating<TEntity>(TEntity newModel)
-            where TEntity : class, IModelEntityCore;
+        Task<AddModelOperationDBResult<TModel>> AddAsync<TModel>(TModel newModel)
+            where TModel : class, IDBModelCore;
+
+        OperationWatingResult<AddModelOperationDBResult<TModel>> AddWating<TModel>(TModel newModel)
+            where TModel : class, IDBModelCore;
 
         //Task<OperationWatingResult<AddModelOperationDBResult<TEntity>>> AddWatingAsync<TEntity>(TEntity newModel)
         //    where TEntity : IModelEntityCore;
+
+        #endregion
+
+        
+        
+        #region Notifier
+
+        #endregion
     }
 
     public abstract class DatabaseServiceCore : IDatabaseService, IDisposable
@@ -43,12 +53,12 @@ namespace Mawa.RepositoryBase.DBs
         #endregion
 
         #region Add
-        public async Task<AddModelOperationDBResult<TEntity>> AddAsync<TEntity>(TEntity newModel) where TEntity : class, IModelEntityCore
+        public async Task<AddModelOperationDBResult<TModel>> AddAsync<TModel>(TModel newModel) where TModel : class, IDBModelCore
         {
             var resultt = await _AddAsync(newModel);
             if (resultt.State == EntityState.Added)
             {
-                _ModelNotify<TEntity>(DBModelNotifierType.Insert, resultt.Entity);
+                _ModelNotify<TModel>(DBModelNotifierType.Insert, resultt.Entity);
             }
             else
             {
@@ -57,16 +67,16 @@ namespace Mawa.RepositoryBase.DBs
             return resultt;
         }
 
-        protected abstract Task<AddModelOperationDBResult<TEntity>> _AddAsync<TEntity>(TEntity newModel) where TEntity : class, IModelEntityCore;
+        protected abstract Task<AddModelOperationDBResult<TModel>> _AddAsync<TModel>(TModel newModel) where TModel : class, IDBModelCore;
 
-        public OperationWatingResult<AddModelOperationDBResult<TEntity>> AddWating<TEntity>(TEntity newModel) where TEntity : class, IModelEntityCore
+        public OperationWatingResult<AddModelOperationDBResult<TModel>> AddWating<TModel>(TModel newModel) where TModel : class, IDBModelCore
         {
-            throw new NotImplementedException();
+            return _AddWating(newModel);
         }
 
-        protected virtual OperationWatingResult<AddModelOperationDBResult<TEntity>> _AddWating<TEntity>(TEntity newModel) where TEntity : class, IModelEntityCore
+        protected virtual OperationWatingResult<AddModelOperationDBResult<TModel>> _AddWating<TModel>(TModel newModel) where TModel : class, IDBModelCore
         {
-            return new OperationWatingResult<AddModelOperationDBResult<TEntity>>(async () =>
+            return new OperationWatingResult<AddModelOperationDBResult<TModel>>(async () =>
             {
                 return await _AddAsync(newModel);
             });
@@ -161,6 +171,7 @@ namespace Mawa.RepositoryBase.DBs
         {
             return eventNotifierHolders_dic[typeof(T)] as IEventNotifierHolder<T>;
         }
+
         #endregion
 
 
