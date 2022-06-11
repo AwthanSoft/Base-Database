@@ -43,24 +43,24 @@ namespace Mawa.DBCore
         //{
         //    return modelDBController.db_Model_Ex.Select(selector);
         //}
-        public static TSource[] ToArray<TSource>(this IEnumerable<TSource> source , IModelDBController<TSource> modelDBController)
-                 where TSource : class, IDBModelCore
-        {
-            modelDBController.open_lock_Ex();
-            var resultt = source.ToArray();
-            modelDBController.close_lock_Ex();
+        //public static TSource[] ToArray<TSource>(this IEnumerable<TSource> source , IModelDBController<TSource> modelDBController)
+        //         where TSource : class, IDBModelCore
+        //{
+        //    modelDBController.open_lock_Ex();
+        //    var resultt = source.ToArray();
+        //    modelDBController.close_lock_Ex();
 
-            return resultt;
-        }
-        public static TSource[] ToArray<TSource, T>(this IEnumerable<TSource> source, IModelDBController<T> modelDBController)
-            where T : class, IDBModelCore
-        {
-            modelDBController.open_lock_Ex();
-            var resultt = source.ToArray();
-            modelDBController.close_lock_Ex();
+        //    return resultt;
+        //}
+        //public static TSource[] ToArray<TSource, T>(this IEnumerable<TSource> source, IModelDBController<T> modelDBController)
+        //    where T : class, IDBModelCore
+        //{
+        //    modelDBController.open_lock_Ex();
+        //    var resultt = source.ToArray();
+        //    modelDBController.close_lock_Ex();
 
-            return resultt;
-        }
+        //    return resultt;
+        //}
         //public static TSource[] ToArray<TSource>(this IQueryable<TSource> source, ModelDBController<TSource> modelDBController)
         //{
         //    modelDBController.open_lock_Ex();

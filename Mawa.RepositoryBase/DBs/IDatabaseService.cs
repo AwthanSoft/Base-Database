@@ -4,6 +4,7 @@ using Mawa.DBCore.NotifierCore;
 using Mawa.RepositoryBase.DBs.Results;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,9 +25,30 @@ namespace Mawa.RepositoryBase.DBs
 
         #endregion
 
-        
-        
+        #region Delete
+
+        Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel newModel)
+            where TModel : class, IDBModelCore;
+
+        #endregion
+
+        #region All
+
+        TModel[] All<TModel>() where TModel : class, IDBModelCore;
+
+        #endregion
+
+        #region Q Struct
+
+        TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+        Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+
+        #endregion
+
+
         #region Notifier
+        void RegistModelNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
+            where T : class, BaseDBCore.IDBModelCore;
 
         #endregion
     }
@@ -83,6 +105,66 @@ namespace Mawa.RepositoryBase.DBs
         }
 
         #endregion
+
+        #region Delete
+        public async Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore
+        {
+            var resultt = await _DeleteAsync(model);
+            if (resultt.State == EntityState.Added)
+            {
+                _ModelNotify<TModel>(DBModelNotifierType.Delete, resultt.Entity);
+            }
+            else
+            {
+                throw new Exception();
+            }
+            return resultt;
+        }
+
+        protected abstract Task<DeleteModelOperationDBResult<TModel>> _DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore;
+
+
+        #endregion
+
+        #region All
+        public TModel[] All<TModel>() where TModel : class, IDBModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _All<TModel>();
+            }
+        }
+        protected abstract TModel[] _All<TModel>() where TModel : class, IDBModelCore;
+
+
+        #endregion
+
+        #region Q Struct
+
+        //
+        public TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        {
+            lock(this.dbLocker.opening_Lock)
+            {
+                return _Q_FirstOrDefault<TModel>(predicate);
+            }
+        }
+
+        protected abstract TModel _Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+        //
+        public Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Q_FirstOrDefaultAsync<TModel>(predicate);
+            }
+        }
+
+        protected abstract Task<TModel> _Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+
+        #endregion
+
+
 
         #region Notifier
 
@@ -156,6 +238,12 @@ namespace Mawa.RepositoryBase.DBs
             eventNotifierHolders_dic.Add(holder.ModelType, holder);
             modelNotifierControlsManager.AddNotifier<T, TId>(holder.notifier);
             return holder.notifier;
+        }
+
+        public void RegistModelNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
+            where T : class, BaseDBCore.IDBModelCore
+        {
+            modelNotifierControlsManager.AddNotifier<T, TId>(modelEventNotifier);
         }
 
         //Get
@@ -302,6 +390,9 @@ namespace Mawa.RepositoryBase.DBs
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+       
+
         ~DatabaseServiceCore()
         {
             Dispose(false);

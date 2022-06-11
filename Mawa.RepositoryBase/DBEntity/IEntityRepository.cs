@@ -1,26 +1,29 @@
 ﻿using Mawa.BaseDBCore.EntityCore;
 using Mawa.RepositoryBase.DBs;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mawa.RepositoryBase.DBEntity
 {
-    //public interface IEntityRepository : IModelRepository
-    //{
-
-    //}
     public interface IEntityRepository<TEntity> : IModelRepository<TEntity>
         where TEntity : class, IModelEntityCore
     {
-        
+
+    }
+    public interface IEntityRepository<TEntity, TId> : IEntityRepository<TEntity>, IModelRepository<TEntity, TId>
+        where TEntity : class, IModelEntityCore
+    {
+
+    }
+    public interface IEntityRepository<TEntity, TEntityCore, TId> : IEntityRepository<TEntityCore, TId>, IModelRepository<TEntity, TEntityCore, TId>
+        where TEntityCore : class, IModelEntityCore
+        where TEntity : TEntityCore
+    {
 
     }
 
 
-    public class EntityRepository<TEntity> : ModelRepository<TEntity>, IEntityRepository<TEntity>
-        where TEntity : class, IModelEntityCore
+    public class EntityRepository<TEntity, TEntityCore, TId> : ModelRepository<TEntity, TEntityCore, TId>, IEntityRepository<TEntity, TEntityCore, TId>
+        where TEntityCore : class, IModelEntityCore
+        where TEntity : TEntityCore
     {
 
         #region Initial 

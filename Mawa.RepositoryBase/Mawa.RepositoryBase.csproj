@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Mawa.BaseDBCore\Mawa.BaseDBCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Notifier\" />
+  </ItemGroup>
+
 </Project>

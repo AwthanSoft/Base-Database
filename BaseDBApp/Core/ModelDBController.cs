@@ -725,7 +725,7 @@ namespace Mawa.DBCore
 
         #endregion
 
-        #region Update Methods
+        #region Remove Methods
 
         //Remove
         public EntityEntry<T> Remove_Model<TEntity>(TEntity model)
