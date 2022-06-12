@@ -63,11 +63,68 @@ namespace Mawa.RepositoryBase
             return AddAsync(newModel);
         }
 
+        public ModelOperationDBResult<TModelCore> AddOrUpdate(TModelCore newModelCore)
+        {
+            var newModel = ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(newModelCore);
+            var resultt =  dbService.AddOrUpdate<TModel,TModelCore>(newModel);
+           
+            return resultt;
+        }
+        #endregion
+
+        #region Update
+
+        public UpdateModelOperationDBResult<TModelCore>[] UpdateRange(TModelCore[] ModelsCore)
+        {
+            var Models = ModelsCore
+                .Select(b => ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(b))
+                .ToArray();
+            var resultt = dbService.UpdateRange<TModel, TModelCore>(Models);
+            foreach (var item in resultt)
+            {
+                switch (item.State)
+                {
+                    case EntityState.Modified:
+                        {
+                            dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Update, item.Entity, defaultNull);
+                            break;
+                        }
+                    default:
+                        {
+                            throw new NotSupportedException();
+                        }
+                }
+            }
+            return resultt;
+        }
 
         #endregion
 
         #region Delete
 
+        public DeleteModelOperationDBResult<TModelCore>[] RemoveRange(TModelCore[] ModelsCore)
+        {
+            var Models = ModelsCore
+                .Select(b => ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(b))
+                .ToArray();
+            var resultt = dbService.RemoveRange<TModel, TModelCore>(Models);
+            foreach (var item in resultt)
+            {
+                switch (item.State)
+                {
+                    case EntityState.Deleted:
+                        {
+                            dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Delete, item.Entity, defaultNull);
+                            break;
+                        }
+                    default:
+                        {
+                            throw new NotSupportedException();
+                        }
+                }
+            }
+            return resultt;
+        }
 
 
         #endregion
@@ -98,7 +155,7 @@ namespace Mawa.RepositoryBase
 
         #endregion
 
-        #region Q Struct
+        #region Q FirstOrDefault
 
         //
         public TModelCore Q_FirstOrDefault(Expression<Func<TModel, bool>> predicate)
@@ -129,12 +186,39 @@ namespace Mawa.RepositoryBase
 
         }
 
-        public Task<TModelCore> Q_FirstOrDefaultAsync(Expression<Func<TModelCore, bool>> predicate)
+        //
+        public async Task<TModelCore> Q_FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return await dbService.Q_FirstOrDefaultAsync<TModel>(predicate);
         }
 
+        public Task<TModelCore> Q_FirstOrDefaultAsync(Expression<Func<TModelCore, bool>> predicate)
+        {
+            return dbService.Q_FirstOrDefaultAsync<TModel, TModelCore>(predicate);
+        }
+
+
         #endregion
+
+        #region Q Where
+
+
+        public TModelCore[] Q_Where(Expression<Func<TModel, bool>> predicate)
+        {
+            return dbService.Q_Where<TModel>(predicate);
+        }
+
+        public TModelCore[] Q_Where(Expression<Func<TModelCore, bool>> predicate)
+        {
+            return dbService.Q_Where<TModel, TModelCore>(predicate);
+
+        }
+
+
+        #endregion
+
+
+
 
 
         #region Notify Events
@@ -166,14 +250,12 @@ namespace Mawa.RepositoryBase
         }
 
 
-        
-
         public Task<DeleteModelOperationDBResult<TModelCore>> DeleteAsync(TModelCore Model)
         {
             throw new NotImplementedException();
         }
 
-       
+        
     }
 
 
@@ -234,29 +316,9 @@ namespace Mawa.RepositoryBase
 
     //    #endregion
 
-    //    #region All
-
-    //    public TModel[] All()
-    //    {
-    //        return dbService.All<TModel>();
-    //    }
+   
 
 
-
-    //    #endregion
-
-
-    //    #region Q Struct
-
-    //    //
-
-
-
-    //    #endregion
-
-
-
-    //}
 
 
 }

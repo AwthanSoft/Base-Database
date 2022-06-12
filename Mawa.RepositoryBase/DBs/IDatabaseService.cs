@@ -1,6 +1,7 @@
 ﻿using AppMe.ComponentModel.Waiting;
 using Mawa.BaseDBCore;
 using Mawa.DBCore.NotifierCore;
+using Mawa.Lock;
 using Mawa.RepositoryBase.DBs.Results;
 using System;
 using System.Collections.Generic;
@@ -29,12 +30,27 @@ namespace Mawa.RepositoryBase.DBs
         //Task<OperationWatingResult<AddModelOperationDBResult<TEntity>>> AddWatingAsync<TEntity>(TEntity newModel)
         //    where TEntity : IModelEntityCore;
 
+        ModelOperationDBResult<TModelCore> AddOrUpdate<TModel, TModelCore>(TModel newModel)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
+
+        #endregion
+
+        #region Update
+
+        UpdateModelOperationDBResult<TModelCore>[] UpdateRange<TModel, TModelCore>(TModel[] Models)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
         #endregion
 
         #region Delete
 
         Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel newModel)
             where TModel : class, IDBModelCore;
+
+        DeleteModelOperationDBResult<TModelCore>[] RemoveRange<TModel, TModelCore>(TModel[] Models)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
 
         #endregion
 
@@ -51,13 +67,27 @@ namespace Mawa.RepositoryBase.DBs
 
         #endregion
 
-        #region Q Struct
+        #region Q FirstOrDefault
 
         TModelCore Q_FirstOrDefault<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
             where TModelCore : class, IDBModelCore
             where TModel : class, TModelCore;
         TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
-        //Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+
+        //
+        Task<TModelCore> Q_FirstOrDefaultAsync<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+          where TModelCore : class, IDBModelCore
+          where TModel : class, TModelCore;
+        Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+
+        #endregion
+
+        #region Q Where
+
+        TModelCore[] Q_Where<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
+        TModel[] Q_Where<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
 
         #endregion
 
@@ -131,13 +161,47 @@ namespace Mawa.RepositoryBase.DBs
             });
         }
 
+
+        //
+        public ModelOperationDBResult<TModelCore> AddOrUpdate<TModel, TModelCore>(TModel newModel)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore
+        {
+            lock(this.dbLocker.opening_Lock)
+            {
+                return _AddOrUpdate<TModel, TModelCore>(newModel);
+            }
+        }
+        protected abstract ModelOperationDBResult<TModelCore> _AddOrUpdate<TModel, TModelCore>(TModel newModel)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;
+
+        #endregion
+
+        #region Update
+
+        //
+        public UpdateModelOperationDBResult<TModelCore>[] UpdateRange<TModel, TModelCore>(TModel[] Models)
+             where TModelCore : class, IDBModelCore
+             where TModel : class, TModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _UpdateRange<TModel, TModelCore>(Models);
+            }
+        }
+        protected abstract UpdateModelOperationDBResult<TModelCore>[] _UpdateRange<TModel, TModelCore>(TModel[] Models)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;
+
         #endregion
 
         #region Delete
+        //
         public async Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore
         {
             var resultt = await _DeleteAsync(model);
-            if (resultt.State == EntityState.Added)
+            if (resultt.State == EntityState.Deleted)
             {
                 _ModelNotify<TModel>(DBModelNotifierType.Delete, resultt.Entity);
             }
@@ -147,9 +211,21 @@ namespace Mawa.RepositoryBase.DBs
             }
             return resultt;
         }
-
         protected abstract Task<DeleteModelOperationDBResult<TModel>> _DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore;
 
+        //RemoveRange
+        public DeleteModelOperationDBResult<TModelCore>[] RemoveRange<TModel, TModelCore>(TModel[] Models)
+             where TModelCore : class, IDBModelCore
+             where TModel : class, TModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _RemoveRange<TModel, TModelCore>(Models);
+            }
+        }
+        protected abstract DeleteModelOperationDBResult<TModelCore>[] _RemoveRange<TModel, TModelCore>(TModel[] Models)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;
 
         #endregion
 
@@ -188,7 +264,7 @@ namespace Mawa.RepositoryBase.DBs
 
         #endregion
 
-        #region Q Struct
+        #region Q FirstOrDefault
 
         //
         public TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
@@ -214,28 +290,61 @@ namespace Mawa.RepositoryBase.DBs
             where TModelCore : class, IDBModelCore
             where TModel : class, TModelCore;
 
-        //public TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
-        //{
-        //    lock(this.dbLocker.opening_Lock)
-        //    {
-        //        return _Q_FirstOrDefault<TModel>(predicate);
-        //    }
-        //}
+        //
+        public Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Q_FirstOrDefaultAsync<TModel>(predicate);
+            }
+        }
+        protected abstract Task<TModel> _Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate)
+            where TModel : class, IDBModelCore;
 
-        //protected abstract TModel _Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
-        ////
-        //public Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
-        //{
-        //    lock (this.dbLocker.opening_Lock)
-        //    {
-        //        return _Q_FirstOrDefaultAsync<TModel>(predicate);
-        //    }
-        //}
+        public Task<TModelCore> Q_FirstOrDefaultAsync<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Q_FirstOrDefaultAsync<TModel, TModelCore>(predicate);
+            }
+        }
+        protected abstract Task<TModelCore> _Q_FirstOrDefaultAsync<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
 
-        //protected abstract Task<TModel> _Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
 
         #endregion
 
+        #region Q Where
+
+        //
+        public TModel[] Q_Where<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Q_Where<TModel>(predicate);
+            }
+        }
+        protected abstract TModel[] _Q_Where<TModel>(Expression<Func<TModel, bool>> predicate)
+            where TModel : class, IDBModelCore;
+
+        public TModelCore[] Q_Where<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Q_Where<TModel, TModelCore>(predicate);
+            }
+        }
+        protected abstract TModelCore[] _Q_Where<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
+
+
+        #endregion
 
 
         #region Notifier

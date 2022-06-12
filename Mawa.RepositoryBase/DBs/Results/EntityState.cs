@@ -9,6 +9,8 @@ namespace Mawa.RepositoryBase.DBs.Results
     //     The state in which an entity is being tracked by a context.
     public enum EntityState
     {
+        Unknown = 0,
+
         //
         // Summary:
         //     The entity is not being tracked by the context.
