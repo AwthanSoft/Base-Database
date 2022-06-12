@@ -11,7 +11,7 @@ namespace Mawa.RepositoryBase
     {
         #region Add
         //Add
-        //Task<AddModelOperationDBResult<TModel>> AddAsync(TModel newModel);
+        Task<AddModelOperationDBResult<TModel>> AddAsync(TModel newModel);
         //OperationWatingResult<AddModelOperationDBResult<TModel>> AddWating(TModel newModel);
         #endregion
 
@@ -23,18 +23,26 @@ namespace Mawa.RepositoryBase
 
         #endregion
 
-        //All
-        //TModel[] All();
-        //Task<TModel[]> AllAsync();
+        #region All
+        
+        TModel[] All();
+        Task<TModel[]> AllAsync();
 
-        //Count
-        //int Count();
+        #endregion
+
+        #region Count
+
+        int Count();
         //int CountAsync();
+
+        #endregion
+
+
 
         #region Struct Q
 
         TModel Q_FirstOrDefault(Expression<Func<TModel, bool>> predicate);
-        Task<TModel> Q_FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
+        //Task<TModel> Q_FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
 
         //int Q_QWhere_Count(Expression<Func<TModel, bool>> predicate);
 
@@ -54,7 +62,7 @@ namespace Mawa.RepositoryBase
     {
         #region Add
         //Add
-        //Task<AddModelOperationDBResult<TModel>> AddAsync(TModel newModel);
+        new Task<AddModelOperationDBResult<TModelCore>> AddAsync(TModelCore newModel);
         //OperationWatingResult<AddModelOperationDBResult<TModel>> AddWating(TModel newModel);
         #endregion
 
@@ -65,20 +73,16 @@ namespace Mawa.RepositoryBase
 
         #endregion
 
+        #region All
+        new TModelCore[] All();
 
-        //All
-        //TModel[] All();
-        //Task<TModel[]> AllAsync();
-
-        //Count
-        //int Count();
-        //int CountAsync();
+        #endregion
 
 
         #region Struct Q
 
         TModelCore Q_FirstOrDefault(Expression<Func<TModel, bool>> predicate);
-        Task<TModelCore> Q_FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
+        //Task<TModelCore> Q_FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
 
         //int Q_QWhere_Count(Expression<Func<TModel, bool>> predicate);
 

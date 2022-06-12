@@ -23,7 +23,7 @@ namespace Mawa.RepositoryBase.DBEntity
 
     public class EntityRepository<TEntity, TEntityCore, TId> : ModelRepository<TEntity, TEntityCore, TId>, IEntityRepository<TEntity, TEntityCore, TId>
         where TEntityCore : class, IModelEntityCore
-        where TEntity : TEntityCore
+        where TEntity : class, TEntityCore
     {
 
         #region Initial 

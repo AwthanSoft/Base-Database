@@ -14,6 +14,12 @@ namespace Mawa.RepositoryBase.DBs
     {
         #region Add
 
+        Task<AddModelOperationDBResult<TModelCore>> AddAsync<TModel, TModelCore>(TModel newModel)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
+
+
+
         Task<AddModelOperationDBResult<TModel>> AddAsync<TModel>(TModel newModel)
             where TModel : class, IDBModelCore;
 
@@ -35,18 +41,29 @@ namespace Mawa.RepositoryBase.DBs
         #region All
 
         TModel[] All<TModel>() where TModel : class, IDBModelCore;
+        Task<TModel[]> AllAsync<TModel>() where TModel : class, IDBModelCore;
+
+        #endregion
+
+        #region Count
+        int Count<TModel>() where TModel : class, IDBModelCore;
+        //int CountAsync();
 
         #endregion
 
         #region Q Struct
 
+        TModelCore Q_FirstOrDefault<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
         TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
-        Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+        //Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
 
         #endregion
 
 
         #region Notifier
+        ModelNotifierControlsManager modelNotifierControlsManager { get; }
         void RegistModelNotifier<T, TId>(ModelEventNotifier<T, TId> modelEventNotifier)
             where T : class, BaseDBCore.IDBModelCore;
 
@@ -75,6 +92,16 @@ namespace Mawa.RepositoryBase.DBs
         #endregion
 
         #region Add
+        public Task<AddModelOperationDBResult<TModelCore>> AddAsync<TModel, TModelCore>(TModel newModel)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore
+        {
+            return _AddAsync<TModel, TModelCore>(newModel);
+        }
+        protected abstract Task<AddModelOperationDBResult<TModelCore>> _AddAsync<TModel, TModelCore>(TModel newModel)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;        
+
         public async Task<AddModelOperationDBResult<TModel>> AddAsync<TModel>(TModel newModel) where TModel : class, IDBModelCore
         {
             var resultt = await _AddAsync(newModel);
@@ -127,6 +154,7 @@ namespace Mawa.RepositoryBase.DBs
         #endregion
 
         #region All
+
         public TModel[] All<TModel>() where TModel : class, IDBModelCore
         {
             lock (this.dbLocker.opening_Lock)
@@ -136,6 +164,27 @@ namespace Mawa.RepositoryBase.DBs
         }
         protected abstract TModel[] _All<TModel>() where TModel : class, IDBModelCore;
 
+        public Task<TModel[]> AllAsync<TModel>() where TModel : class, IDBModelCore
+        {
+            return _AllAsync<TModel>();
+        }
+        protected abstract Task<TModel[]> _AllAsync<TModel>() where TModel : class, IDBModelCore;
+
+
+        #endregion
+
+        #region Count
+
+        public int Count<TModel>() where TModel : class, IDBModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Count<TModel>();
+            }
+        }
+        protected abstract int _Count<TModel>() where TModel : class, IDBModelCore;
+
+        //int CountAsync();
 
         #endregion
 
@@ -144,23 +193,46 @@ namespace Mawa.RepositoryBase.DBs
         //
         public TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
         {
-            lock(this.dbLocker.opening_Lock)
+            lock (this.dbLocker.opening_Lock)
             {
                 return _Q_FirstOrDefault<TModel>(predicate);
             }
         }
+        protected abstract TModel _Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate)
+            where TModel : class, IDBModelCore;
 
-        protected abstract TModel _Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
-        //
-        public Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        public TModelCore Q_FirstOrDefault<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore
         {
             lock (this.dbLocker.opening_Lock)
             {
-                return _Q_FirstOrDefaultAsync<TModel>(predicate);
+                return _Q_FirstOrDefault<TModel, TModelCore>(predicate);
             }
         }
+        protected abstract TModelCore _Q_FirstOrDefault<TModel, TModelCore>(Expression<Func<TModelCore, bool>> predicate)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
 
-        protected abstract Task<TModel> _Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+        //public TModel Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        //{
+        //    lock(this.dbLocker.opening_Lock)
+        //    {
+        //        return _Q_FirstOrDefault<TModel>(predicate);
+        //    }
+        //}
+
+        //protected abstract TModel _Q_FirstOrDefault<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
+        ////
+        //public Task<TModel> Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore
+        //{
+        //    lock (this.dbLocker.opening_Lock)
+        //    {
+        //        return _Q_FirstOrDefaultAsync<TModel>(predicate);
+        //    }
+        //}
+
+        //protected abstract Task<TModel> _Q_FirstOrDefaultAsync<TModel>(Expression<Func<TModel, bool>> predicate) where TModel : class, IDBModelCore;
 
         #endregion
 
@@ -218,19 +290,20 @@ namespace Mawa.RepositoryBase.DBs
             //}
             public void ModelNotify(DBModelNotifierType notifierType, T[] models)
             {
-               modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models, defaultNull);
+                modelNotifierControlsManager.ModelNotify<T, TId>(notifierType, models, defaultNull);
             }
 
             #endregion
         }
 
-        readonly internal ModelNotifierControlsManager modelNotifierControlsManager;
+        readonly ModelNotifierControlsManager modelNotifierControlsManager;
+        ModelNotifierControlsManager IDatabaseService.modelNotifierControlsManager => this.modelNotifierControlsManager;
         readonly Dictionary<Type, IEventNotifierHolder> eventNotifierHolders_dic;
         private void pre_initial_Notifier()
         {
 
         }
-       
+
         public ModelEventNotifier<T, TId> RegistModelNotifier<T, TId>(TId defaultNull)
             where T : class, BaseDBCore.IDBModelCore
         {
@@ -391,7 +464,6 @@ namespace Mawa.RepositoryBase.DBs
             GC.SuppressFinalize(this);
         }
 
-       
 
         ~DatabaseServiceCore()
         {

@@ -14,4 +14,8 @@
     <Folder Include="Notifier\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Dynamic" Version="1.0.8" />
+  </ItemGroup>
+
 </Project>
