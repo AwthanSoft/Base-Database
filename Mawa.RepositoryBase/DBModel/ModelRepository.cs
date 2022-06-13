@@ -67,7 +67,25 @@ namespace Mawa.RepositoryBase
         {
             var newModel = ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(newModelCore);
             var resultt =  dbService.AddOrUpdate<TModel,TModelCore>(newModel);
-           
+
+            switch (resultt.OperationType)
+            {
+                case DBModelOperationType.Add:
+                    {
+                        dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Insert, resultt.Entity, defaultNull);
+                        break;
+                    }
+                case DBModelOperationType.Update:
+                    {
+                        dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Update, resultt.Entity, defaultNull);
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotSupportedException();
+                    }
+            }
+
             return resultt;
         }
         #endregion
@@ -98,10 +116,57 @@ namespace Mawa.RepositoryBase
             return resultt;
         }
 
+        public UpdateModelOperationDBResult<TModelCore> Update(TModelCore ModelCore)
+        {
+            var Model = ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(ModelCore);
+            var resultt = dbService.Update<TModel, TModelCore>(Model);
+            switch (resultt.State)
+            {
+                case EntityState.Modified:
+                    {
+                        dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Update, resultt.Entity, defaultNull);
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotSupportedException();
+                    }
+            }
+            return resultt;
+        }
+
         #endregion
 
         #region Delete
 
+        //RemoveAsync
+        public async Task<DeleteModelOperationDBResult<TModelCore>> RemoveAsync(TModel Model)
+        {
+            var resultt = await dbService.RemoveAsync<TModel, TModelCore>(Model);
+
+            switch (resultt.OperationType)
+            {
+                case DBModelOperationType.Delete:
+                    {
+                        dbService.modelNotifierControlsManager.ModelNotify<TModelCore, TId>(DBModelNotifierType.Delete, resultt.Entity, defaultNull);
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotSupportedException();
+                    }
+            }
+
+            return resultt;
+        }
+        public Task<DeleteModelOperationDBResult<TModelCore>> RemoveAsync(TModelCore modelCore)
+        {
+            var Model = ParentChildCopyingHelper.CopyToChild<TModelCore, TModel>(modelCore);
+            return RemoveAsync(Model);
+        }
+
+
+        //RemoveRange
         public DeleteModelOperationDBResult<TModelCore>[] RemoveRange(TModelCore[] ModelsCore)
         {
             var Models = ModelsCore
@@ -244,16 +309,7 @@ namespace Mawa.RepositoryBase
 
         #endregion
 
-        public Task<DeleteModelOperationDBResult<TModelCore>> DeleteAsync(TModel Model)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public Task<DeleteModelOperationDBResult<TModelCore>> DeleteAsync(TModelCore Model)
-        {
-            throw new NotImplementedException();
-        }
+      
 
         
     }

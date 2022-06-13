@@ -18,13 +18,14 @@ namespace Mawa.RepositoryBase
 
         #region Update
         UpdateModelOperationDBResult<TModel>[] UpdateRange(TModel[] models);
+        UpdateModelOperationDBResult<TModel> Update(TModel model);
 
         #endregion
 
         #region Delete
 
         //Delete
-        Task<DeleteModelOperationDBResult<TModel>> DeleteAsync(TModel Model);
+        Task<DeleteModelOperationDBResult<TModel>> RemoveAsync(TModel Model);
         //OperationWatingResult<AddModelOperationDBResult<TModel>> DeleteWating(TModel Model);
 
         DeleteModelOperationDBResult<TModel>[] RemoveRange(TModel[] Models);
@@ -82,13 +83,14 @@ namespace Mawa.RepositoryBase
         #region Update
 
         new UpdateModelOperationDBResult<TModelCore>[] UpdateRange(TModelCore[] ModelsCore);
+        new UpdateModelOperationDBResult<TModelCore> Update(TModelCore ModelCore);
 
         #endregion
 
         #region Delete
 
         //Delete
-        Task<DeleteModelOperationDBResult<TModelCore>> DeleteAsync(TModel Model);
+        Task<DeleteModelOperationDBResult<TModelCore>> RemoveAsync(TModel Model);
         new DeleteModelOperationDBResult<TModelCore>[] RemoveRange(TModelCore[] ModelsCore);
 
         #endregion

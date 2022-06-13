@@ -41,12 +41,20 @@ namespace Mawa.RepositoryBase.DBs
         UpdateModelOperationDBResult<TModelCore>[] UpdateRange<TModel, TModelCore>(TModel[] Models)
             where TModelCore : class, IDBModelCore
             where TModel : class, TModelCore;
+
+        UpdateModelOperationDBResult<TModelCore> Update<TModel, TModelCore>(TModel Model)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
         #endregion
 
         #region Delete
 
-        Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel newModel)
-            where TModel : class, IDBModelCore;
+        //Task<DeleteModelOperationDBResult<TModel>> RemoveAsync<TModel>(TModel newModel)
+        //    where TModel : class, IDBModelCore;
+
+        Task<DeleteModelOperationDBResult<TModelCore>> RemoveAsync<TModel, TModelCore>(TModel Model)
+            where TModelCore : class, IDBModelCore
+            where TModel : class, TModelCore;
 
         DeleteModelOperationDBResult<TModelCore>[] RemoveRange<TModel, TModelCore>(TModel[] Models)
             where TModelCore : class, IDBModelCore
@@ -194,24 +202,54 @@ namespace Mawa.RepositoryBase.DBs
            where TModelCore : class, IDBModelCore
            where TModel : class, TModelCore;
 
+        //
+        public UpdateModelOperationDBResult<TModelCore> Update<TModel, TModelCore>(TModel Model)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore
+        {
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _Update<TModel, TModelCore>(Model);
+            }
+        }
+        protected abstract UpdateModelOperationDBResult<TModelCore> _Update<TModel, TModelCore>(TModel Model)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;
+
         #endregion
 
         #region Delete
         //
-        public async Task<DeleteModelOperationDBResult<TModel>> DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore
+        //public async Task<DeleteModelOperationDBResult<TModel>> RemoveAsync<TModel>(TModel model) where TModel : class, IDBModelCore
+        //{
+        //    var resultt = await _RemoveAsync(model);
+        //    if (resultt.State == EntityState.Deleted)
+        //    {
+        //        _ModelNotify<TModel>(DBModelNotifierType.Delete, resultt.Entity);
+        //    }
+        //    else
+        //    {
+        //        throw new Exception();
+        //    }
+        //    return resultt;
+        //}
+        //protected abstract Task<DeleteModelOperationDBResult<TModel>> _RemoveAsync<TModel>(TModel model) where TModel : class, IDBModelCore;
+
+
+        //RemoveAsync
+        public Task<DeleteModelOperationDBResult<TModelCore>> RemoveAsync<TModel, TModelCore>(TModel Model)
+        where TModelCore : class, IDBModelCore
+        where TModel : class, TModelCore
         {
-            var resultt = await _DeleteAsync(model);
-            if (resultt.State == EntityState.Deleted)
+            lock (this.dbLocker.opening_Lock)
             {
-                _ModelNotify<TModel>(DBModelNotifierType.Delete, resultt.Entity);
+                return _RemoveAsync<TModel, TModelCore>(Model);
             }
-            else
-            {
-                throw new Exception();
-            }
-            return resultt;
         }
-        protected abstract Task<DeleteModelOperationDBResult<TModel>> _DeleteAsync<TModel>(TModel model) where TModel : class, IDBModelCore;
+        protected abstract Task<DeleteModelOperationDBResult<TModelCore>> _RemoveAsync<TModel, TModelCore>(TModel Model)
+           where TModelCore : class, IDBModelCore
+           where TModel : class, TModelCore;
+
 
         //RemoveRange
         public DeleteModelOperationDBResult<TModelCore>[] RemoveRange<TModel, TModelCore>(TModel[] Models)
@@ -242,7 +280,10 @@ namespace Mawa.RepositoryBase.DBs
 
         public Task<TModel[]> AllAsync<TModel>() where TModel : class, IDBModelCore
         {
-            return _AllAsync<TModel>();
+            lock (this.dbLocker.opening_Lock)
+            {
+                return _AllAsync<TModel>();
+            }
         }
         protected abstract Task<TModel[]> _AllAsync<TModel>() where TModel : class, IDBModelCore;
 
