@@ -350,24 +350,24 @@ namespace Mawa.DBCore
         }
 
         //QWhere-Count
-        public int Q_QWhere_Count(Expression<Func<T, bool>> predicate)
-        {
-            lock (dBManagerCore.DBOpeningLock)
-            {
-                return _Q_QWhere_Count(predicate);
-            }
-        }
-        public int Q_QWhere_Count_trans(Expression<Func<T, bool>> predicate)
-        {
-            return db_Model.Where(predicate).Count();
-        }
-        private int _Q_QWhere_Count(Expression<Func<T, bool>> predicate)
-        {
-            using (var db = dBManagerCore.GetNew_dbContext())
-            {
-                return db.Set<T>().Where(predicate).Count();
-            }
-        }
+        //public int Q_QWhere_Count(Expression<Func<T, bool>> predicate)
+        //{
+        //    lock (dBManagerCore.DBOpeningLock)
+        //    {
+        //        return _Q_QWhere_Count(predicate);
+        //    }
+        //}
+        //public int Q_QWhere_Count_trans(Expression<Func<T, bool>> predicate)
+        //{
+        //    return db_Model.Where(predicate).Count();
+        //}
+        //private int _Q_QWhere_Count(Expression<Func<T, bool>> predicate)
+        //{
+        //    using (var db = dBManagerCore.GetNew_dbContext())
+        //    {
+        //        return db.Set<T>().Where(predicate).Count();
+        //    }
+        //}
 
         //QWhere-Select-ToArray
         public TResult[] Q_QWhere_Select_ToArray<TResult>(Expression<Func<T, bool>> predicate, Func<T, TResult> selector)
@@ -470,8 +470,233 @@ namespace Mawa.DBCore
             return await db_Model.Where(predicate).FirstAsync();
         }
 
+        //FirstOrDefault
+        public T Q_FirstOrDefault(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    if(predicate != null)
+                        return dbContext.Set<T>().FirstOrDefault(predicate);
+                    else
+                        return dbContext.Set<T>().FirstOrDefault();
+                }
+            }
+        }
+        public async Task<T> Q_FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            T resultt = null;
+            if (OpeningLock)
+            {
+                open_lock();
+                try
+                {
+                    if (predicate != null)
+                        resultt = await db_Model.FirstOrDefaultAsync(predicate);
+                    else
+                        resultt = await db_Model.FirstOrDefaultAsync();
+                }
+                catch (Exception)
+                {
+                    close_lock();
+                    throw;
+                }
+                close_lock();
+                return resultt;
+            }
+            else
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    if (predicate != null)
+                        resultt = await dbContext.Set<T>().FirstOrDefaultAsync(predicate);
+                    else
+                        resultt = await dbContext.Set<T>().FirstOrDefaultAsync();
+                }
+            }
 
+            return resultt;
+        }
+        public T Q_FirstOrDefault_trans(Expression<Func<T, bool>> predicate)
+        {
+            if (predicate != null)
+                return db_Model.FirstOrDefault(predicate);
+            else
+                return db_Model.FirstOrDefault();
+        }
+        public Task<T> Q_FirstOrDefault_transAsync(Expression<Func<T, bool>> predicate)
+        {
+            if (predicate != null)
+                return db_Model.FirstOrDefaultAsync(predicate);
+            else
+                return db_Model.FirstOrDefaultAsync();
+        }
 
+        //QWhere-Count
+        public int Q_QWhere_Count(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return dbContext.Set<T>().Where(predicate).Count();
+                }
+            }
+        }
+        public async Task<int> Q_QWhere_CountAsync(Expression<Func<T, bool>> predicate, bool OpeningLock = false)
+        {
+            if (OpeningLock)
+            {
+                open_lock();
+                var resultt = await db_Model.Where(predicate).CountAsync();
+                close_lock();
+                return resultt;
+            }
+            else
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return await dbContext.Set<T>().Where(predicate).CountAsync();
+                }
+            }
+        }
+        public int Q_QWhere_Count_trans(Expression<Func<T, bool>> predicate)
+        {
+            return db_Model.Where(predicate).Count();
+        }
+        public async Task<int> Q_QWhere_Count_transAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await db_Model.Where(predicate).CountAsync();
+        }
+
+        //Add
+        public EntityEntry<T> Add<TEntity>(TEntity newModel)
+            where TEntity : ModelEntityCore
+        {
+            EntityEntry<T> resultt = null;
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                try
+                {
+                    using (var dbContext = dBManagerCore.GetNew_dbContext())
+                    {
+                        resultt = dbContext.Set<T>().Add(newModel as T);
+                        if (resultt.State == EntityState.Added)
+                        {
+                            dbContext.SaveChanges();
+                            _ModelNotify(DBModelNotifierType.Insert, resultt.Entity);
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            return resultt;
+        }
+        public async Task<EntityEntry<T>> AddAsync<TEntity>(TEntity newModel, bool OpeningLock = false)
+            where TEntity : ModelEntityCore
+        {
+            EntityEntry<T> resultt = null;
+            if (OpeningLock)
+            {
+                open_lock();
+                try
+                {
+                    resultt = await db_Model.AddAsync(newModel as T);
+                    if (resultt.State == EntityState.Added)
+                    {
+                        await db.SaveChangesAsync();
+                        _ModelNotify(DBModelNotifierType.Insert, resultt.Entity);
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    close_lock();
+                    throw ex;
+                }
+                close_lock();
+            }
+            else
+            {
+                try
+                {
+                    using (var dbContext = dBManagerCore.GetNew_dbContext())
+                    {
+                        resultt = await dbContext.Set<T>().AddAsync(newModel as T);
+                        if (resultt.State == EntityState.Added)
+                        {
+                            await dbContext.SaveChangesAsync();
+                            _ModelNotify(DBModelNotifierType.Insert, resultt.Entity);
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    close_lock();
+                    throw ex;
+                }
+            }
+            return resultt;
+        }
+        public EntityEntry<T> Add_trans<TEntity>(TEntity newModel)
+            where TEntity : ModelEntityCore
+        {
+            EntityEntry<T> resultt = null;
+            try
+            {
+                resultt = db_Model.Add(newModel as T);
+                if (resultt.State == EntityState.Added)
+                {
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return resultt;
+        }
+        public async Task<EntityEntry<T>> Add_transAsync<TEntity>(TEntity newModel)
+            where TEntity : ModelEntityCore
+        {
+            EntityEntry<T> resultt = null;
+            try
+            {
+                resultt = await db_Model.AddAsync(newModel as T);
+                if (resultt.State == EntityState.Added)
+                {
+                    await db.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return resultt;
+        }
 
         #endregion
 
