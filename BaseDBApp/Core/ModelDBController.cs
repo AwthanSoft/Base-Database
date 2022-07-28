@@ -410,24 +410,24 @@ namespace Mawa.DBCore
         }
 
         //QWhere-Take-ToArray
-        public T[] Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
-        {
-            lock (dBManagerCore.DBOpeningLock)
-            {
-                return _Q_Where_Take_ToArray(predicate, takeCount);
-            }
-        }
-        public T[] Q_Where_Take_ToArray_trans(Func<T, bool> predicate, int takeCount)
-        {
-            return db_Model.Where(predicate).Take(takeCount).ToArray();
-        }
-        private T[] _Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
-        {
-            using (var db = dBManagerCore.GetNew_dbContext())
-            {
-                return db.Set<T>().Where(predicate).Take(takeCount).ToArray();
-            }
-        }
+        //public T[] Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
+        //{
+        //    lock (dBManagerCore.DBOpeningLock)
+        //    {
+        //        return _Q_Where_Take_ToArray(predicate, takeCount);
+        //    }
+        //}
+        //public T[] Q_Where_Take_ToArray_trans(Func<T, bool> predicate, int takeCount)
+        //{
+        //    return db_Model.Where(predicate).Take(takeCount).ToArray();
+        //}
+        //private T[] _Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
+        //{
+        //    using (var db = dBManagerCore.GetNew_dbContext())
+        //    {
+        //        return db.Set<T>().Where(predicate).Take(takeCount).ToArray();
+        //    }
+        //}
 
         #endregion
 
@@ -697,6 +697,81 @@ namespace Mawa.DBCore
             }
             return resultt;
         }
+
+        //QWhere-Take-ToArray
+        public T[] Q_QWhere_Take_ToArray(Expression<Func<T, bool>> predicate, int takeCount)
+        {
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return dbContext.Set<T>().Where(predicate).Take(takeCount).ToArray();
+                }
+            }
+        }
+        public async Task<T[]> Q_QWhere_Take_ToArrayAsync(Expression<Func<T, bool>> predicate, int takeCount, bool OpeningLock = false)
+        {
+            if (OpeningLock)
+            {
+                open_lock();
+                var resultt = await db_Model.Where(predicate).Take(takeCount).ToArrayAsync();
+                close_lock();
+                return resultt;
+            }
+            else
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return await dbContext.Set<T>().Where(predicate).Take(takeCount).ToArrayAsync();
+                }
+            }
+        }
+        public T[] Q_QWhere_Take_ToArray_trans(Expression<Func<T, bool>> predicate, int takeCount)
+        {
+            return db_Model.Where(predicate).Take(takeCount).ToArray();
+        }
+        public async Task<T[]> Q_QWhere_Take_ToArray_transAsync(Expression<Func<T, bool>> predicate, int takeCount)
+        {
+            return await db_Model.Where(predicate).Take(takeCount).ToArrayAsync();
+        }
+
+
+        //Where-Take-ToArray
+        public T[] Q_Where_Take_ToArray(Func<T, bool> predicate, int takeCount)
+        {
+            lock (dBManagerCore.DBOpeningLock)
+            {
+                using (var dbContext = dBManagerCore.GetNew_dbContext())
+                {
+                    return dbContext.Set<T>().Where(predicate).Take(takeCount).ToArray();
+                }
+            }
+        }
+        //public async Task<T[]> Q_Where_Take_ToArrayAsync(Func<T, bool> predicate, int takeCount, bool OpeningLock = false)
+        //{
+        //    if (OpeningLock)
+        //    {
+        //        open_lock();
+        //        var resultt = await db_Model.Where(predicate).Take(takeCount).ToArrayAsync();
+        //        close_lock();
+        //        return resultt;
+        //    }
+        //    else
+        //    {
+        //        using (var dbContext = dBManagerCore.GetNew_dbContext())
+        //        {
+        //            return await dbContext.Set<T>().Where(predicate).Take(takeCount).ToArrayAsync();
+        //        }
+        //    }
+        //}
+        public T[] Q_Where_Take_ToArray_trans(Func<T, bool> predicate, int takeCount)
+        {
+            return db_Model.Where(predicate).Take(takeCount).ToArray();
+        }
+        //public async Task<T[]> Q_Where_Take_ToArray_transAsync(Func<T, bool> predicate, int takeCount)
+        //{
+        //    return await db_Model.Where(predicate).Take(takeCount).ToArrayAsync();
+        //}
 
         #endregion
 
